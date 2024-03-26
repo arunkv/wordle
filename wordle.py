@@ -87,13 +87,14 @@ def compute_word_scores(words, letter_probabilities):
     return word_scores
 
 
-def get_response():
+def get_response(length):
     while True:
         response = input("Response (q to quit, i for invalid word, x for no match, o for partial match, "
                          "= for exact match)? ")
         response = response.strip().lower()
         logging.info("Response: %s" % response)
-        if all(char in {'x', 'o', '='} for char in response) or response == 'i' or response == 'q':
+        if (all(char in {'x', 'o', '='} for char in response) and len(response) == length
+                or response == 'i' or response == 'q'):
             break
         else:
             print("Invalid response. Please try again.")
@@ -120,7 +121,7 @@ def solve(args):
         logging.info("Guess: %s" % guess)
         tries += 1
 
-        response = get_response()
+        response = get_response(args.len)
 
         if response == 'q':  # Exit
             print("Aborting!")
@@ -165,7 +166,8 @@ def solve(args):
         logging.debug("Known letters: %s" % known_letters)
         logging.debug("Search space: %s" % search_space)
         words = trim_word_list_by_search_space(words, search_space, known_letters)
-
+    logging.info("Words left: %s" % len(words))
+    print("Failed to solve the Wordle. Words left: %s" % len(words))
 
 if __name__ == '__main__':
     solve(parse_arguments())
