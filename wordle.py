@@ -18,6 +18,7 @@ import os
 import string
 
 import nltk
+from termcolor import colored
 
 import constants
 
@@ -97,7 +98,7 @@ def get_response(length):
                 or response == 'i' or response == 'q'):
             break
         else:
-            print("Invalid response. Please try again.")
+            print(colored("Invalid response. Please try again."), 'red')
     return response
 
 
@@ -111,20 +112,21 @@ def solve(args):
     letter_probabilities = compute_letter_probabilities(words)
     while tries < args.tries:
         if len(words) == 0:
-            print("No words left in the dictionary")
+            print(colored("No words left in the dictionary", "red", "on_white"))
             break
 
         word_scores = compute_word_scores(words, letter_probabilities)
         guess = word_scores[0][0]
         words.remove(guess)
-        print("Guess: %s" % guess)
+        print("Guess: ", end="")
+        print(colored(guess, 'blue', 'on_white'))
         logging.info("Guess: %s" % guess)
         tries += 1
 
         response = get_response(args.len)
 
         if response == 'q':  # Exit
-            print("Aborting!")
+            print(colored("Aborting!", "red"))
             break
 
         if response == 'i':  # Try another word since Wordle didn't accept this word
@@ -132,7 +134,7 @@ def solve(args):
             continue
 
         if response == '=' * args.len:  # Wordle solved
-            print("Wordle solved in %s tries" % tries)
+            print(colored("Wordle solved in {} tries".format(tries), "purple", "on_white"))
             break
 
         # Process '=' responses first
@@ -169,7 +171,7 @@ def solve(args):
         print("Words left: {}: {}".format(len(words), words[:10] if len(words) > 10 else words))
     logging.info("Words left: %s" % len(words))
     if tries >= args.tries:
-        print("Failed to solve the Wordle!")
+        print(colored("Failed to solve the Wordle!", "red"))
 
 
 if __name__ == '__main__':
