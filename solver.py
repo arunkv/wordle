@@ -18,7 +18,7 @@ from wordlist import get_word_list
 # Trim the word list by the provided search space, including known letters
 def trim_word_list_by_search_space(word_list, search_space, known_letters):
     return [word for word in word_list if all(word[i] in letters for i, letters in enumerate(search_space))
-            and set(known_letters).issubset(set(word))]
+            and known_letters.issubset(set(word))]
 
 
 # Compute letter probabilities for each position in the word
@@ -105,22 +105,17 @@ def solve(args):
         tries += 1
 
         response = get_response(args.len)
-
         if response == 'q':  # Exit
             print("Aborting!")
             break
-
         if response == 'i':  # Try another word since Wordle didn't accept this word
             tries -= 1
             continue
-
         if response == '=' * args.len:  # Wordle solved
             print("Wordle solved in {} tries".format(tries))
             solved = True
             break
-
         process_response(guess, response, search_space, known_letters, args.len)
-
         logging.debug("Known letters: %s" % known_letters)
         logging.debug("Search space: %s" % search_space)
         words = trim_word_list_by_search_space(words, search_space, known_letters)
