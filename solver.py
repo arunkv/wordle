@@ -31,21 +31,15 @@ def compute_letter_probabilities(words):
     return letter_probabilities
 
 
+# Compute the score for a word given the individual letter probabilities
 def compute_word_score(word, letter_probabilities):
-    score = 0.0
-    for i, letter in enumerate(word):
-        score += letter_probabilities[i].get(letter, 0.0)
-
-    return score
+    return sum(letter_probabilities[i].get(letter, 0.0) for i, letter in enumerate(word))
 
 
+# Get the score for all words in the word list
 def compute_word_scores(words, letter_probabilities):
-    # Compute the score for each word
     word_scores = [(word, compute_word_score(word, letter_probabilities)) for word in words]
-
-    # Sort the words by score in descending order
     word_scores.sort(key=lambda x: x[1], reverse=True)
-
     return word_scores
 
 
