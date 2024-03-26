@@ -108,12 +108,12 @@ def solve(args):
     tries = 0
     search_space = [set(string.ascii_lowercase) for _ in range(args.len)]
     known_letters = set()
+    letter_probabilities = compute_letter_probabilities(words)
     while tries < args.tries:
         if len(words) == 0:
             print("No words left in the dictionary")
             break
 
-        letter_probabilities = compute_letter_probabilities(words)
         word_scores = compute_word_scores(words, letter_probabilities)
         guess = word_scores[0][0]
         words.remove(guess)
