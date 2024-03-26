@@ -12,8 +12,6 @@ import collections
 import logging
 import string
 
-from termcolor import colored
-
 from wordlist import get_word_list
 
 
@@ -52,8 +50,38 @@ def get_response(length):
                 or response == 'i' or response == 'q'):
             break
         else:
-            print(colored("Invalid response. Please try again."), 'red')
+            print("Invalid response. Please try again.")
     return response
+
+
+def process_response(guess, response, search_space, known_letters, length):
+    # Process '=' responses first
+    for i, response_letter in enumerate(response):
+        if response_letter == '=':
+            known_letters.add(guess[i])
+            search_space[i] = {guess[i]}
+
+    # Then process 'o' responses
+    for i, response_letter in enumerate(response):
+        if response_letter == 'o':
+            known_letters.add(guess[i])
+            search_space[i].discard(guess[i])
+
+    # Finally, process 'x' responses
+    for i, response_letter in enumerate(response):
+        if response_letter == 'x':
+            search_space[i].discard(guess[i])
+            other_exact_match_positions = set()
+            other_partial_match_positions = set()
+            for j, search_letters in enumerate(search_space):
+                if j != i and guess[j] == guess[i]:
+                    if response[j] == 'o':
+                        other_partial_match_positions.add(j)
+                    elif response[j] == '=':
+                        other_exact_match_positions.add(j)
+            if not other_partial_match_positions:
+                for j in set(range(length)) - {i} - other_exact_match_positions:
+                    search_space[j].discard(guess[i])
 
 
 def solve(args):
@@ -67,21 +95,19 @@ def solve(args):
     solved = False
     while tries < args.tries:
         if len(words) == 0:
-            print(colored("No words left in the dictionary", "red", "on_white"))
+            print("No words left in the dictionary!")
             break
 
         word_scores = compute_word_scores(words, letter_probabilities)
         guess = word_scores[0][0]
         words.remove(guess)
-        print("Guess: ", end="")
-        print(colored(guess, 'blue', 'on_white'))
-        logging.info("Guess: %s" % guess)
+        print("Guess: {}".format(guess))
         tries += 1
 
         response = get_response(args.len)
 
         if response == 'q':  # Exit
-            print(colored("Aborting!", "red"))
+            print("Aborting!")
             break
 
         if response == 'i':  # Try another word since Wordle didn't accept this word
@@ -89,42 +115,16 @@ def solve(args):
             continue
 
         if response == '=' * args.len:  # Wordle solved
-            print(colored("Wordle solved in {} tries".format(tries), "green", "on_white"))
+            print("Wordle solved in {} tries".format(tries))
             solved = True
             break
 
-        # Process '=' responses first
-        for i, response_letter in enumerate(response):
-            if response_letter == '=':
-                known_letters.add(guess[i])
-                search_space[i] = {guess[i]}
-
-        # Then process 'o' responses
-        for i, response_letter in enumerate(response):
-            if response_letter == 'o':
-                known_letters.add(guess[i])
-                search_space[i].discard(guess[i])
-
-        # Finally, process 'x' responses
-        for i, response_letter in enumerate(response):
-            if response_letter == 'x':
-                search_space[i].discard(guess[i])
-                other_exact_match_positions = set()
-                other_partial_match_positions = set()
-                for j, search_letters in enumerate(search_space):
-                    if j != i and guess[j] == guess[i]:
-                        if response[j] == 'o':
-                            other_partial_match_positions.add(j)
-                        elif response[j] == '=':
-                            other_exact_match_positions.add(j)
-                if not other_partial_match_positions:
-                    for j in set(range(args.len)) - {i} - other_exact_match_positions:
-                        search_space[j].discard(guess[i])
+        process_response(guess, response, search_space, known_letters, args.len)
 
         logging.debug("Known letters: %s" % known_letters)
         logging.debug("Search space: %s" % search_space)
         words = trim_word_list_by_search_space(words, search_space, known_letters)
         print("Words left: {}: {}".format(len(words), words[:10] if len(words) > 10 else words))
-    logging.info("Words left: %s" % len(words))
+
     if not solved:
-        print(colored("Failed to solve the Wordle!", "red"))
+        print("Failed to solve the Wordle!")
