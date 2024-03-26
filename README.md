@@ -20,3 +20,28 @@ Options:
   -l LEN, --len LEN       Word length (default: 5)
   -t TRIES, --tries TRIES Maximum tries (default: 6)
 ```
+
+## Example
+![Example Wordle game](./wordlegame.png)
+```
+❯ ./wordle.py
+Guess: soree
+Response (i for invalid word, x for no match, o for partial match, = for exact match)? xxxx=
+Guess: ceile
+Response (i for invalid word, x for no match, o for partial match, = for exact match)? i
+Guess: alite
+Response (i for invalid word, x for no match, o for partial match, = for exact match)? i
+Guess: alate
+Response (i for invalid word, x for no match, o for partial match, = for exact match)? xxxx=
+Guess: binge
+Response (i for invalid word, x for no match, o for partial match, = for exact match)? x=xx=
+Guess: fifie
+Response (i for invalid word, x for no match, o for partial match, = for exact match)? i
+Guess: pixie
+Response (i for invalid word, x for no match, o for partial match, = for exact match)? ==xx=
+Guess: piece
+Response (i for invalid word, x for no match, o for partial match, = for exact match)? ==xx=
+Guess: pique
+Response (i for invalid word, x for no match, o for partial match, = for exact match)? =====
+Wordle solved in 6 tries
+```
