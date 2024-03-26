@@ -166,11 +166,10 @@ def solve(args):
         logging.debug("Known letters: %s" % known_letters)
         logging.debug("Search space: %s" % search_space)
         words = trim_word_list_by_search_space(words, search_space, known_letters)
+        print("Words left: {}: {}".format(len(words), words[:10] if len(words) > 10 else words))
     logging.info("Words left: %s" % len(words))
     if tries >= args.tries:
-        print("Failed to solve the Wordle. Words left: {}: {}".format(len(words), words[:10] if len(words) > 10 else words))
-    else:
-        print("Words left: {}: {}".format(len(words), words[:10] if len(words) > 10 else words))
+        print("Failed to solve the Wordle!")
 
 
 if __name__ == '__main__':
