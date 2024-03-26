@@ -121,7 +121,6 @@ def solve(args):
         tries += 1
 
         response = get_response()
-        logging.info("Guess: %s" % guess)
 
         if response == 'q':  # Exit
             print("Aborting!")
