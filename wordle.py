@@ -65,7 +65,7 @@ def trim_word_list_by_search_space(word_list, search_space, known_letters):
 # Compute letter probabilities for each position in the word
 def compute_letter_probabilities(words):
     letter_frequencies = [collections.Counter(word[i] for word in words) for i in range(len(words[0]))]
-    letter_probabilities = [{letter: freq / len(words) for letter, freq in freqs.items()} for freqs in
+    letter_probabilities = [{letter: freq / len(words) for letter, freq in frequencies.items()} for frequencies in
                             letter_frequencies]
     return letter_probabilities
 
@@ -74,6 +74,7 @@ def compute_word_score(word, letter_probabilities):
     score = 0.0
     for i, letter in enumerate(word):
         score += letter_probabilities[i].get(letter, 0.0)
+
     return score
 
 
@@ -89,8 +90,7 @@ def compute_word_scores(words, letter_probabilities):
 
 def get_response(length):
     while True:
-        response = input("Response (q to quit, i for invalid word, x for no match, o for partial match, "
-                         "= for exact match)? ")
+        response = input("Response (q quit, i invalid, x no match, o partial match, = exact match)? ")
         response = response.strip().lower()
         logging.info("Response: %s" % response)
         if (all(char in {'x', 'o', '='} for char in response) and len(response) == length
@@ -167,7 +167,11 @@ def solve(args):
         logging.debug("Search space: %s" % search_space)
         words = trim_word_list_by_search_space(words, search_space, known_letters)
     logging.info("Words left: %s" % len(words))
-    print("Failed to solve the Wordle. Words left: %s" % len(words))
+    if tries >= args.tries:
+        print("Failed to solve the Wordle. Words left: {}: {}".format(len(words), words[:10] if len(words) > 10 else words))
+    else:
+        print("Words left: {}: {}".format(len(words), words[:10] if len(words) > 10 else words))
+
 
 if __name__ == '__main__':
     solve(parse_arguments())
