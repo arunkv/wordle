@@ -110,6 +110,7 @@ def solve(args):
     search_space = [set(string.ascii_lowercase) for _ in range(args.len)]
     known_letters = set()
     letter_probabilities = compute_letter_probabilities(words)
+    solved = False
     while tries < args.tries:
         if len(words) == 0:
             print(colored("No words left in the dictionary", "red", "on_white"))
@@ -134,7 +135,8 @@ def solve(args):
             continue
 
         if response == '=' * args.len:  # Wordle solved
-            print(colored("Wordle solved in {} tries".format(tries), "purple", "on_white"))
+            print(colored("Wordle solved in {} tries".format(tries), "green", "on_white"))
+            solved = True
             break
 
         # Process '=' responses first
@@ -170,7 +172,7 @@ def solve(args):
         words = trim_word_list_by_search_space(words, search_space, known_letters)
         print("Words left: {}: {}".format(len(words), words[:10] if len(words) > 10 else words))
     logging.info("Words left: %s" % len(words))
-    if tries >= args.tries:
+    if not solved:
         print(colored("Failed to solve the Wordle!", "red"))
 
 
