@@ -87,11 +87,17 @@ def compute_word_scores(words, letter_probabilities):
     return word_scores
 
 
-def is_guess_i_in_other_positions(i, guess, response):
-    for j, (guess_char, response_char) in enumerate(zip(guess, response)):
-        if j != i and guess_char == guess[i] and response_char in {'o', '='}:
-            return True
-    return False
+def get_response():
+    while True:
+        response = input("Response (q to quit, i for invalid word, x for no match, o for partial match, "
+                         "= for exact match)? ")
+        response = response.strip().lower()
+        logging.info("Response: %s" % response)
+        if all(char in {'x', 'o', '='} for char in response) or response == 'i' or response == 'q':
+            break
+        else:
+            print("Invalid response. Please try again.")
+    return response
 
 
 def solve(args):
@@ -114,37 +120,48 @@ def solve(args):
         logging.info("Guess: %s" % guess)
         tries += 1
 
-        while True:
-            response = input("Response (i for invalid word, x for no match, o for partial match, = for exact match)? ")
-            response = response.strip().lower()
-            logging.info("Response: %s" % response)
-            if all(char in {'x', 'o', '='} for char in response) or response == 'i':
-                break
-            else:
-                print("Invalid response. Please try again.")
+        response = get_response()
+        logging.info("Guess: %s" % guess)
 
-        if response == 'i':
-            # Try another word since Wordle didn't accept this word
+        if response == 'q':  # Exit
+            print("Aborting!")
+            break
+
+        if response == 'i':  # Try another word since Wordle didn't accept this word
             tries -= 1
             continue
 
-        if response == '=' * args.len:
+        if response == '=' * args.len:  # Wordle solved
             print("Wordle solved in %s tries" % tries)
             break
 
+        # Process '=' responses first
+        for i, response_letter in enumerate(response):
+            if response_letter == '=':
+                known_letters.add(guess[i])
+                search_space[i] = {guess[i]}
+
+        # Then process 'o' responses
+        for i, response_letter in enumerate(response):
+            if response_letter == 'o':
+                known_letters.add(guess[i])
+                search_space[i].discard(guess[i])
+
+        # Finally, process 'x' responses
         for i, response_letter in enumerate(response):
             if response_letter == 'x':
                 search_space[i].discard(guess[i])
-                if not is_guess_i_in_other_positions(i, guess, response):
-                    for j, search_letters in enumerate(search_space):
-                        if j != i:
-                            search_letters.discard(guess[i])
-            elif response_letter == 'o':
-                known_letters.add(guess[i])
-                search_space[i].discard(guess[i])
-            elif response_letter == '=':
-                known_letters.add(guess[i])
-                search_space[i] = {guess[i]}
+                other_exact_match_positions = set()
+                other_partial_match_positions = set()
+                for j, search_letters in enumerate(search_space):
+                    if j != i and guess[j] == guess[i]:
+                        if response[j] == 'o':
+                            other_partial_match_positions.add(j)
+                        elif response[j] == '=':
+                            other_exact_match_positions.add(j)
+                if not other_partial_match_positions:
+                    for j in set(range(args.len)) - {i} - other_exact_match_positions:
+                        search_space[j].discard(guess[i])
 
         logging.debug("Known letters: %s" % known_letters)
         logging.debug("Search space: %s" % search_space)
