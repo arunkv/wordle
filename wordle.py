@@ -27,12 +27,9 @@ logging.basicConfig(filename=constants.LOG_FILE, filemode='a', level=logging.INF
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Interactive Wordle Solver')
-    parser.add_argument('-D', '--dict', type=str,
-                        help='Dictionary file (default: NLTK words)')
-    parser.add_argument('-l', '--len', type=int,
-                        help='Word length (default: {})'.format(constants.DEFAULT_WORD_LENGTH))
-    parser.add_argument('-t', '--tries', type=int,
-                        help='Maximum tries (default: {})'.format(constants.DEFAULT_TRIES))
+    parser.add_argument('-D', '--dict', type=str, help='Dictionary file (default: NLTK words)')
+    parser.add_argument('-l', '--len', type=int, help='Word length (default: {})'.format(constants.DEFAULT_WORD_LENGTH))
+    parser.add_argument('-t', '--tries', type=int, help='Maximum tries (default: {})'.format(constants.DEFAULT_TRIES))
     args = parser.parse_args()
     args.dict = args.dict or 'nltk'
     args.len = args.len or constants.DEFAULT_WORD_LENGTH
@@ -59,22 +56,13 @@ def get_word_list(word_list):
         return nltk_words
 
 
-# Trim the dictionary to words of a specific length
-
-
+# Trim the word list by the provided search space, including known letters
 def trim_word_list_by_search_space(word_list, search_space, known_letters):
-    trimmed_word_list = []
-    for word in word_list:
-        match = True
-        for i, letters in enumerate(search_space):
-            if word[i] not in letters:
-                match = False
-                break
-        if match and set(known_letters).issubset(set(word)):
-            trimmed_word_list.append(word)
-    return trimmed_word_list
+    return [word for word in word_list if all(word[i] in letters for i, letters in enumerate(search_space))
+            and set(known_letters).issubset(set(word))]
 
 
+# Compute letter probabilities for each position in the word
 def compute_letter_probabilities(words):
     letter_frequencies = [collections.Counter(word[i] for word in words) for i in range(len(words[0]))]
     letter_probabilities = [{letter: freq / len(words) for letter, freq in freqs.items()} for freqs in
@@ -106,15 +94,6 @@ def is_guess_i_in_other_positions(i, guess, response):
     return False
 
 
-def is_valid_response(response):
-    if response == 'i':
-        return True
-    for char in response:
-        if char not in {'x', 'o', '='}:
-            return False
-    return True
-
-
 def solve(args):
     words = [word for word in get_word_list(args.dict) if len(word) == args.len and not word[0].isupper()]
     logging.info("Word list loaded with %s words", len(words))
@@ -139,7 +118,7 @@ def solve(args):
             response = input("Response (i for invalid word, x for no match, o for partial match, = for exact match)? ")
             response = response.strip().lower()
             logging.info("Response: %s" % response)
-            if is_valid_response(response):
+            if all(char in {'x', 'o', '='} for char in response) or response == 'i':
                 break
             else:
                 print("Invalid response. Please try again.")
