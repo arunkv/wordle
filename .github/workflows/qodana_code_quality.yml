@@ -18,9 +18,8 @@ jobs:
         with:
           fetch-depth: 0
       - name: 'Qodana Scan'
-        uses: JetBrains/qodana-action@v2022.2.3
+        uses: JetBrains/qodana-action@v2023.3.2
         with:
-          args: '-b,qodana.sarif.json,--fail-threshold,3'
           use-caches: false
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }} # read the steps about it below
