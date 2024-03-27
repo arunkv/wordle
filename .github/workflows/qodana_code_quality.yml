@@ -24,7 +24,3 @@ jobs:
           use-caches: false
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }} # read the steps about it below
-      - name: 'Github Code Scanning'
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.j
