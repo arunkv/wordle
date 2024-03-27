@@ -11,7 +11,6 @@
 import collections
 import json
 import logging
-import os
 import string
 from constants import WORDLE_STATS_FILE
 from wordlist import get_word_list
@@ -107,7 +106,7 @@ def solve(args):
     search_space = [set(string.ascii_lowercase) for _ in range(args.len)]
     known_letters = set()
     letter_probabilities = compute_letter_probabilities(words)
-    solved = False
+    solution = None
     stats = load_stats()
     stats['played'] = stats.get('played', 0) + 1
     save_stats(stats)
@@ -117,7 +116,7 @@ def solve(args):
             break
 
         word_scores = compute_word_scores(words, letter_probabilities)
-        guess = word_scores[0][0]
+        guess = word_scores[0][0]  # Pick the top probability word
         words.remove(guess)
         print("Guess: {}".format(guess))
         tries += 1
@@ -131,11 +130,7 @@ def solve(args):
             continue
         if response == '=' * args.len:  # Wordle solved
             print("Wordle solved in {} tries".format(tries))
-            stats['solved'] = stats.get('solved', 0) + 1
-            stats['tries'] = stats.get('tries', {})
-            stats['tries'][guess] = tries
-            save_stats(stats)
-            solved = True
+            solution = guess
             break
         process_response(guess, response, search_space, known_letters, args.len)
         logging.debug("Known letters: %s" % known_letters)
@@ -143,5 +138,11 @@ def solve(args):
         words = trim_word_list_by_search_space(words, search_space, known_letters)
         print("Words left: {}: {}".format(len(words), words[:10] if len(words) > 10 else words))
 
-    if not solved:
+    if solution:
+        stats['solved'] = stats.get('solved', 0) + 1
+        stats['average_tries'] = (stats.get('average_tries', 0) * (stats['solved'] - 1) + tries) / stats['solved']
+        stats['tries'] = stats.get('tries', {})
+        stats['tries'][solution] = tries
+    else:
         print("Failed to solve the Wordle!")
+    save_stats(stats)
