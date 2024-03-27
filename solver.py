@@ -9,9 +9,10 @@
 #        http://www.apache.org/licenses/LICENSE-2.0
 
 import collections
+import json
 import logging
 import string
-
+from constants import WORDLE_STATS_FILE
 from wordlist import get_word_list
 
 
@@ -84,6 +85,21 @@ def process_response(guess, response, search_space, known_letters, length):
                     search_space[j].discard(guess[i])
 
 
+def load_stats():
+    with open(WORDLE_STATS_FILE, "a+") as stats_file:
+        try:
+            stats = json.load(stats_file)
+        except json.JSONDecodeError:
+            stats = {}
+            save_stats(stats)
+    return stats
+
+
+def save_stats(stats):
+    with open(WORDLE_STATS_FILE, "w") as stats_file:
+        json.dump(stats, stats_file)
+
+
 def solve(args):
     words = [word for word in get_word_list(args.dict) if len(word) == args.len and not word[0].isupper()]
     logging.info("Word list loaded with %s words", len(words))
@@ -93,6 +109,8 @@ def solve(args):
     known_letters = set()
     letter_probabilities = compute_letter_probabilities(words)
     solved = False
+    stats = load_stats()
+    stats['played'] = stats.get('played', 0) + 1
     while tries < args.tries:
         if len(words) == 0:
             print("No words left in the dictionary!")
@@ -113,6 +131,10 @@ def solve(args):
             continue
         if response == '=' * args.len:  # Wordle solved
             print("Wordle solved in {} tries".format(tries))
+            stats['solved'] = stats.get('solved', 0) + 1
+            stats['tries'] = stats.get('tries', {})
+            stats['tries'][guess] = tries
+            save_stats(stats)
             solved = True
             break
         process_response(guess, response, search_space, known_letters, args.len)
@@ -121,5 +143,7 @@ def solve(args):
         words = trim_word_list_by_search_space(words, search_space, known_letters)
         print("Words left: {}: {}".format(len(words), words[:10] if len(words) > 10 else words))
 
-    if not solved:
+    if solved:
+        pass
+    else:
         print("Failed to solve the Wordle!")
