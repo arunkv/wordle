@@ -45,6 +45,11 @@ Guess: pique
 Response (i for invalid word, x for no match, o for partial match, = for exact match)? =====
 Wordle solved in 6 tries
 ```
+
+## CI Status
+
+[![Qodana](https://github.com/arunkv/wordle/actions/workflows/qodana_code_quality.yml/badge.svg)](https://github.com/arunkv/wordle/actions/workflows/qodana_code_quality.yml)
+
 ## License
 
 Apache License 2.0
