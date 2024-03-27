@@ -11,6 +11,7 @@
 import collections
 import json
 import logging
+import os
 import string
 from constants import WORDLE_STATS_FILE
 from wordlist import get_word_list
@@ -86,13 +87,11 @@ def process_response(guess, response, search_space, known_letters, length):
 
 
 def load_stats():
-    with open(WORDLE_STATS_FILE, "a+") as stats_file:
-        try:
-            stats = json.load(stats_file)
-        except json.JSONDecodeError:
-            stats = {}
-            save_stats(stats)
-    return stats
+    try:
+        with open(WORDLE_STATS_FILE, "r") as stats_file:
+            return json.load(stats_file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
 
 
 def save_stats(stats):
@@ -111,6 +110,7 @@ def solve(args):
     solved = False
     stats = load_stats()
     stats['played'] = stats.get('played', 0) + 1
+    save_stats(stats)
     while tries < args.tries:
         if len(words) == 0:
             print("No words left in the dictionary!")
@@ -143,7 +143,5 @@ def solve(args):
         words = trim_word_list_by_search_space(words, search_space, known_letters)
         print("Words left: {}: {}".format(len(words), words[:10] if len(words) > 10 else words))
 
-    if solved:
-        pass
-    else:
+    if not solved:
         print("Failed to solve the Wordle!")
