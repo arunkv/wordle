@@ -23,6 +23,7 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
 
 import logging
 import string
+from collections import Counter
 
 from constants import RESPONSE_PROMPT
 from probabilisticsolver import ProbabilisticSolver
@@ -94,22 +95,23 @@ def process_response(guess, response, search_space, known_letters, length):
         response (str): The user's response to the guess.
         search_space (list): A list of sets, where each set contains the possible letters for the
                              corresponding position in the word.
-        known_letters (set): A set of letters that are known to be in the word.
+        known_letters (list): A set of letters that are known to be in the word.
         length (int): The length of the word.
 
     Returns:
         None
     """
+    known_letters.clear()
     # Process '=' responses first
     for i, response_letter in enumerate(response):
         if response_letter == '=':
-            known_letters.add(guess[i])
+            known_letters.append(guess[i])
             search_space[i] = {guess[i]}
 
     # Then process 'o' responses
     for i, response_letter in enumerate(response):
         if response_letter == 'o':
-            known_letters.add(guess[i])
+            known_letters.append(guess[i])
             search_space[i].discard(guess[i])
 
     # Finally, process 'x' responses
@@ -140,14 +142,36 @@ def trim_word_list_by_search_space(word_list, search_space, known_letters):
         word_list (list): The list of words to trim.
         search_space (list): A list of sets, where each set contains the possible letters for the
                              corresponding position in the word.
-        known_letters (set): A set of letters that are known to be in the word.
+        known_letters (list): A set of letters that are known to be in the word.
 
     Returns:
         list: The trimmed word list.
     """
     return [word for word in word_list
             if all(word[i] in letters for i, letters in enumerate(search_space))
-            and known_letters.issubset(set(word))]
+            and are_known_letters_in_word(word, known_letters)]
+
+
+def are_known_letters_in_word(word, known_letters):
+    """
+    Checks if all letters in the `known_letters` list, including duplicates, are present in a word.
+
+    This function uses a Counter object from the `collections` module in Python to count the
+    occurrences of each letter in the word and in the `known_letters` list. It then checks if for
+    every letter in `known_letters`, the count in the word is greater than or equal to the count
+    in `known_letters`.
+
+    Args:
+        word (str): The word in which to check for the presence of the known letters.
+        known_letters (list): A list of known letters to check for in the word.
+
+    Returns:
+        bool: True if all letters in `known_letters` (including duplicates) are present in `word`,
+              False otherwise.
+    """
+    word_counter = Counter(word)
+    known_letters_counter = Counter(known_letters)
+    return all(word_counter[letter] >= count for letter, count in known_letters_counter.items())
 
 
 def quiet_print(quiet, *args, **kwargs):
@@ -189,7 +213,7 @@ def solve(args):
 
     solver = ProbabilisticSolver(words)
     search_space = [set(string.ascii_lowercase) for _ in range(args.len)]
-    known_letters = set()
+    known_letters = []
     solution = None
 
     stats = load_stats()
