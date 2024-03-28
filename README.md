@@ -15,16 +15,16 @@ NYTimes Wordle game: https://www.nytimes.com/games/wordle/index.html
 
 > `wordle.py [-h] [-D DICT] [-l LEN] [-t TRIES] [-n] [-w WORD] [-q]`
 
-Interactive Wordle Solver
-
-options:
+### Options:
+```
   -h, --help              Show this help message and exit
   -D DICT, --dict DICT    Dictionary file (default: NLTK words)
   -l LEN, --len LEN       Word length (default: 5)
   -t TRIES, --tries TRIES Maximum tries (default: 6)
-  -n, --non-interactive   Turn on non-interactive mode by providing the word to guess.
+  -n, --non-interactive   Turn on non-interactive mode by providing the word to guess
   -w WORD, --word WORD    The word to solve in non-interactive mode
   -q, --quiet             Turn off output
+```
 
 ## Example
 ![Example Wordle game](./wordlegame.png)
