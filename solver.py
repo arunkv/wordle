@@ -55,6 +55,32 @@ def get_response(length):
     return response
 
 
+def get_response_non_interactive(word, guess):
+    """
+    Returns the response for a given word and guess.
+
+    This function calculates the response for a given word and guess by comparing the letters at
+    each position in the word and guess. It returns a string of 'x', 'o', and '=' characters
+    indicating the matches between the word and guess.
+
+    Args:
+        word (str): The word to compare against.
+        guess (str): The guess to compare with the word.
+
+    Returns:
+        str: The response string.
+    """
+    response = ''
+    for word_letter, guess_letter in zip(word, guess):
+        if word_letter == guess_letter:
+            response += '='
+        elif guess_letter in word:
+            response += 'o'
+        else:
+            response += 'x'
+    return response
+
+
 def process_response(guess, response, search_space, known_letters, length):
     """
     Processes the user's response to a guess.
@@ -124,6 +150,24 @@ def trim_word_list_by_search_space(word_list, search_space, known_letters):
             and known_letters.issubset(set(word))]
 
 
+def quiet_print(quiet, *args, **kwargs):
+    """
+    A no-op function to suppress printing output.
+
+    This function is used to suppress printing output when the quiet mode is enabled.
+
+    Args:
+        quiet (bool): Whether to suppress printing.
+        *args: Positional arguments.
+        **kwargs: Keyword arguments.
+
+    Returns:
+        None
+    """
+    if not quiet:
+        print(*args, **kwargs)
+
+
 def solve(args):
     """
     The main function for the Wordle solver.
@@ -155,30 +199,35 @@ def solve(args):
     tries = 0
     while tries < args.tries:
         if len(words) == 0:
-            print("No words left in the dictionary!")
+            quiet_print(args.quiet, "No words left in the dictionary!")
             break
 
         guess = solver.guess(words)
         words.remove(guess)
-        print(f"Guess: {guess}")
+        quiet_print(args.quiet, f"Guess: {guess}")
         tries += 1
 
-        response = get_response(args.len)
+        if args.non_interactive:
+            response = get_response_non_interactive(args.word, guess)
+            quiet_print(args.quiet, f"Response: {response}")
+        else:
+            response = get_response(args.len)
         if response == 'q':  # Exit
-            print("Aborting!")
+            quiet_print(args.quiet, "Aborting!")
             break
         if response == 'i':  # Try another word since Wordle didn't accept this word
             tries -= 1
             continue
         if response == '=' * args.len:  # Wordle solved
-            print(f"Wordle solved in {tries} tries")
+            quiet_print(args.quiet, f"Wordle solved in {tries} tries")
             solution = guess
             break
         process_response(guess, response, search_space, known_letters, args.len)
         logging.debug("Known letters: %s", known_letters)
         logging.debug("Search space: %s", search_space)
         words = trim_word_list_by_search_space(words, search_space, known_letters)
-        print(f"Words left: {len(words)}: {words[:10] if len(words) > 10 else words}")
+        quiet_print(args.quiet,
+                    f"Words left: {len(words)}: {words[:10] if len(words) > 10 else words}")
 
     if solution:
         stats['solved'] = stats.get('solved', 0) + 1
@@ -187,5 +236,5 @@ def solve(args):
         stats['tries'] = stats.get('tries', {})
         stats['tries'][solution] = tries
     else:
-        print("Failed to solve the Wordle!")
+        quiet_print(args.quiet, "Failed to solve the Wordle!")
     save_stats(stats)

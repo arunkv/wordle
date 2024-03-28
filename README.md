@@ -1,8 +1,10 @@
-# Interactive Wordle Solver
+# Wordle Solver
 
-Solves the Wordle game interactively. 
+Solves the Wordle game interactively or optionally non-interactively. 
 
-_Wordle_ is a word puzzle in which the player has to guess a five-letter word within six attempts. After each guess, the player is given feedback on the letters that are correct and in the correct position, correct but in the wrong position, or incorrect.
+_Wordle_ is a word puzzle in which the player has to guess a five-letter word within six attempts. After each guess, 
+the player is given feedback on the letters that are correct and in the correct position, correct but in the wrong 
+position, or incorrect.
 
 NYTimes Wordle game: https://www.nytimes.com/games/wordle/index.html
 
@@ -11,15 +13,18 @@ NYTimes Wordle game: https://www.nytimes.com/games/wordle/index.html
 
 ## Usage
 
-`wordle.py [-h] [-D DICT] [-l LEN] [-t TRIES]`
+> `wordle.py [-h] [-D DICT] [-l LEN] [-t TRIES] [-n] [-w WORD] [-q]`
 
-Options:
-```
-  -h, --help              show this help message and exit
+Interactive Wordle Solver
+
+options:
+  -h, --help              Show this help message and exit
   -D DICT, --dict DICT    Dictionary file (default: NLTK words)
   -l LEN, --len LEN       Word length (default: 5)
   -t TRIES, --tries TRIES Maximum tries (default: 6)
-```
+  -n, --non-interactive   Turn on non-interactive mode by providing the word to guess.
+  -w WORD, --word WORD    The word to solve in non-interactive mode
+  -q, --quiet             Turn off output
 
 ## Example
 ![Example Wordle game](./wordlegame.png)
