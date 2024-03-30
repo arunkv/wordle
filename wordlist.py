@@ -21,40 +21,34 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
 """
 
 import logging
-import os
 
 import nltk
 
 
-def get_word_list(word_list):
+def get_word_list(word_lists: list) -> set:
     """
-    Retrieves the word list from specified file or NLTK words corpus if the file does not exist.
+    Generates a set of words from a list of word files.
 
-    This function first checks if the specified file exists and is a file. If it is, it reads the
-    file and returns a list of words. If the file does not exist, it attempts to retrieve the word
-    list from the NLTK words corpus. If the NLTK words corpus is not available, it downloads the
-    corpus and then retrieves the word list.
-
-    Parameters:
-    word_list (str): The path to the file containing the word list.
+    Args:
+        word_lists (list): A list of file paths to word files.
 
     Returns:
-    list: A list of words from the specified file or the NLTK corpus.
+        set: A set of words from the word files or the NLTK corpus words.
     """
-
-    try:
-        if os.path.isfile(word_list):
-            logging.info("Using custom dictionary: %s", word_list)
-            with open(word_list, 'r', encoding='utf-8') as word_file:
-                return [line.strip() for line in word_file]
-        else:
-            raise FileNotFoundError
-    except FileNotFoundError:
+    word_list = set()
+    for word_file in word_lists:
         try:
-            nltk_words = nltk.corpus.words.words()
-        except LookupError:
-            nltk.download('words')
-            logging.info("Downloading NLTK corpus")
-            nltk_words = nltk.corpus.words.words()
-            logging.info("NLTK corpus downloaded with %s words", len(nltk_words))
-        return nltk_words
+            with open(word_file, 'r', encoding='utf-8') as file:
+                word_list = word_list.union([line.strip() for line in file])
+        except FileNotFoundError:
+            print(f"File {word_file} not found.")
+    if len(word_list) > 0:
+        return word_list
+    try:
+        nltk_words = nltk.corpus.words.words()
+    except LookupError:
+        nltk.download('words')
+        logging.info("Downloading NLTK corpus")
+        nltk_words = nltk.corpus.words.words()
+        logging.info("NLTK corpus downloaded with %s words", len(nltk_words))
+    return nltk_words

@@ -47,7 +47,8 @@ def parse_arguments():
         argparse.Namespace: The parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(description='Wordle Solver')
-    parser.add_argument('-D', '--dict', type=str, help='Dictionary file (default: NLTK words)')
+    parser.add_argument('-d', '--dict', type=str, required=True, nargs='+',
+                        help='Dictionary files')
     parser.add_argument('-l', '--len', type=int, default=constants.DEFAULT_WORD_LENGTH,
                         help=f'Word length (default: {constants.DEFAULT_WORD_LENGTH})')
     parser.add_argument('-t', '--tries', type=int, default=constants.DEFAULT_TRIES,
@@ -55,14 +56,13 @@ def parse_arguments():
     parser.add_argument('-n', '--non-interactive', action='store_true',
                         help='Turn on non-interactive mode by providing the word to guess')
     parser.add_argument('-w', '--word', type=str,
-                        help='The word to solve in non-interactive mode.')
+                        help='The word to solve in non-interactive mode')
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
     args = parser.parse_args()
     if args.non_interactive and not args.word:
         parser.error('-n|--non-interactive requires -w|--word')
     elif not args.non_interactive and args.word is not None:
         parser.error("-w|--word argument should not be used without -n|--non-interactive")
-    args.dict = args.dict or 'nltk'
     args.len = args.len or constants.DEFAULT_WORD_LENGTH
     args.tries = args.tries or constants.DEFAULT_TRIES
     return args
