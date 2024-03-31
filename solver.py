@@ -76,7 +76,13 @@ def get_response_non_interactive(word, guess):
         if word_letter == guess_letter:
             response += '='
         elif guess_letter in word:
-            response += 'o'
+            num_occurrences = Counter(word)[guess_letter]
+            num_exact_matches = sum(1 for w, g in zip(word, guess)
+                                    if w == guess_letter and g == guess_letter)
+            if num_exact_matches == 0 or num_occurrences < num_exact_matches:
+                response += 'o'
+            else:
+                response += 'x'
         else:
             response += 'x'
     return response
