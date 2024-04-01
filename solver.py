@@ -28,6 +28,7 @@ from collections import Counter
 from constants import RESPONSE_PROMPT
 from probabilisticsolver import ProbabilisticSolver
 from stats import load_stats, save_stats
+from utils import quiet_print
 from wordlist import get_word_list
 
 
@@ -180,24 +181,6 @@ def are_known_letters_in_word(word, known_letters):
     return all(word_counter[letter] >= count for letter, count in known_letters_counter.items())
 
 
-def quiet_print(quiet, *args, **kwargs):
-    """
-    A no-op function to suppress printing output.
-
-    This function is used to suppress printing output when the quiet mode is enabled.
-
-    Args:
-        quiet (bool): Whether to suppress printing.
-        *args: Positional arguments.
-        **kwargs: Keyword arguments.
-
-    Returns:
-        None
-    """
-    if not quiet:
-        print(*args, **kwargs)
-
-
 def solve(args):
     """
     The main function for the Wordle solver.
@@ -217,7 +200,7 @@ def solve(args):
              if len(word) == args.len and not word[0].isupper()]
     logging.info("Word list loaded with %s words", len(words))
 
-    solver = ProbabilisticSolver(words)
+    solver = ProbabilisticSolver(args.quiet, words)
     search_space = [set(string.ascii_lowercase) for _ in range(args.len)]
     known_letters = []
     solution = None
@@ -231,6 +214,9 @@ def solve(args):
         if len(words) == 0:
             quiet_print(args.quiet, "No words left in the dictionary!")
             break
+
+        quiet_print(args.quiet, f"Round: {(tries + 1)}")
+        quiet_print(args.quiet, f"Current possible answers: {len(words)}")
 
         guess = solver.guess(words)
         words.remove(guess)
@@ -256,8 +242,9 @@ def solve(args):
         logging.debug("Known letters: %s", known_letters)
         logging.debug("Search space: %s", search_space)
         words = trim_word_list_by_search_space(words, search_space, known_letters)
-        quiet_print(args.quiet,
-                    f"Words left: {len(words)}: {words[:10] if len(words) > 10 else words}")
+        logging.info("Words left: %s", len(words))
+        logging.debug("Words: %s", words)
+        quiet_print(args.quiet, "")  # New line for better readability
 
     if solution:
         stats['solved'] = stats.get('solved', 0) + 1
