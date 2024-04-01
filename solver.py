@@ -25,7 +25,7 @@ import logging
 import string
 from collections import Counter
 
-from constants import RESPONSE_PROMPT
+from constants import FAILURE_PROMPT, RESPONSE_PROMPT
 from probabilisticsolver import ProbabilisticSolver
 from stats import load_stats, save_stats
 from utils import quiet_print
@@ -254,4 +254,11 @@ def solve(args):
         stats['tries'][solution] = tries
     else:
         quiet_print(args.quiet, "Failed to solve the Wordle!")
+        stats['failed'] = stats.get('failed', [])
+        if args.non_interactive:
+            stats['failed'].append(args.word)
+        else:
+            word = input(FAILURE_PROMPT)
+            if word:
+                stats['failed'].append(word)
     save_stats(stats)

@@ -28,3 +28,4 @@ DEFAULT_TRIES = DEFAULT_WORD_LENGTH + 1
 LOG_FILE = 'wordle.log'
 WORDLE_STATS_FILE = 'wordle_stats.json'
 RESPONSE_PROMPT = "Response (q quit, i invalid, x no match, o partial match, = exact match)? "
+FAILURE_PROMPT = "Please provide the correct word: "
