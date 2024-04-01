@@ -23,7 +23,8 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
 
 import json
 
-from constants import WORDLE_STATS_FILE
+from constants import WORDLE_STATS_FILE, FAILURE_PROMPT
+from utils import quiet_print
 
 
 def load_stats():
@@ -59,3 +60,34 @@ def save_stats(stats):
     """
     with open(WORDLE_STATS_FILE, 'w', encoding='utf-8') as stats_file:
         json.dump(stats, stats_file, indent=4)
+
+
+def finalize_stats(args, stats, solution, tries):
+    """
+    Update the statistics based on the solution and number of tries.
+
+    Parameters:
+        args (dict): The arguments passed to the function.
+        stats (dict): The current statistics dictionary.
+        solution (str): The solution string.
+        tries (int): The number of tries it took to solve the solution.
+
+    Returns:
+        None
+    """
+    if solution:
+        stats['solved'] = stats.get('solved', 0) + 1
+        stats['average_tries'] = \
+            (stats.get('average_tries', 0) * (stats['solved'] - 1) + tries) / stats['solved']
+        stats['tries'] = stats.get('tries', {})
+        stats['tries'][solution] = tries
+    else:
+        quiet_print(args.quiet, "Failed to solve the Wordle!")
+        stats['failed'] = stats.get('failed', [])
+        if args.non_interactive:
+            stats['failed'].append(args.word)
+        else:
+            word = input(FAILURE_PROMPT)
+            if word:
+                stats['failed'].append(word)
+    save_stats(stats)

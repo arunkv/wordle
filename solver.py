@@ -25,9 +25,9 @@ import logging
 import string
 from collections import Counter
 
-from constants import FAILURE_PROMPT, RESPONSE_PROMPT
+from constants import RESPONSE_PROMPT
 from probabilisticsolver import ProbabilisticSolver
-from stats import load_stats, save_stats
+from stats import load_stats, finalize_stats
 from utils import quiet_print
 from wordlist import get_word_list
 
@@ -87,6 +87,29 @@ def get_response_non_interactive(word, guess):
         else:
             response += 'x'
     return response
+
+
+def display_response(quiet, response):
+    """
+    Displays the response to the user with standard Wordle colors.
+
+    Args:
+        quiet (bool): A flag indicating whether to display the response quietly.
+        response (str): The response string to display.
+
+    Returns:
+        None
+    """
+    if not quiet:
+        print("Response: ", end='')
+        for char in response:
+            if char == '=':
+                print('\033[92m' + '█' + '\033[0m', end='')
+            elif char == 'o':
+                print('\033[93m' + '█' + '\033[0m', end='')
+            else:
+                print('\033[91m' + '█' + '\033[0m', end='')
+        print()
 
 
 def process_response(guess, response, search_space, known_letters, length):
@@ -207,7 +230,6 @@ def solve(args):
 
     stats = load_stats()
     stats['played'] = stats.get('played', 0) + 1
-    save_stats(stats)
 
     tries = 0
     while tries < args.tries:
@@ -218,16 +240,20 @@ def solve(args):
         quiet_print(args.quiet, f"Round: {(tries + 1)}")
         quiet_print(args.quiet, f"Current possible answers: {len(words)}")
 
+        # Generate a guess
         guess = solver.guess(words)
         words.remove(guess)
         quiet_print(args.quiet, f"Guess: {guess}")
         tries += 1
 
+        # Get the response
         if args.non_interactive:
             response = get_response_non_interactive(args.word, guess)
-            quiet_print(args.quiet, f"Response: {response}")
         else:
             response = get_response(args.len)
+        display_response(args.quiet, response)
+
+        # Process the response
         if response == 'q':  # Exit
             quiet_print(args.quiet, "Aborting!")
             break
@@ -239,6 +265,8 @@ def solve(args):
             solution = guess
             break
         process_response(guess, response, search_space, known_letters, args.len)
+
+        # Trim the word list based on the search space and known letters
         logging.debug("Known letters: %s", known_letters)
         logging.debug("Search space: %s", search_space)
         words = trim_word_list_by_search_space(words, search_space, known_letters)
@@ -246,19 +274,4 @@ def solve(args):
         logging.debug("Words: %s", words)
         quiet_print(args.quiet, "")  # New line for better readability
 
-    if solution:
-        stats['solved'] = stats.get('solved', 0) + 1
-        stats['average_tries'] = \
-            (stats.get('average_tries', 0) * (stats['solved'] - 1) + tries) / stats['solved']
-        stats['tries'] = stats.get('tries', {})
-        stats['tries'][solution] = tries
-    else:
-        quiet_print(args.quiet, "Failed to solve the Wordle!")
-        stats['failed'] = stats.get('failed', [])
-        if args.non_interactive:
-            stats['failed'].append(args.word)
-        else:
-            word = input(FAILURE_PROMPT)
-            if word:
-                stats['failed'].append(word)
-    save_stats(stats)
+    finalize_stats(args, stats, solution, tries)
