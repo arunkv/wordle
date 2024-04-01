@@ -58,4 +58,4 @@ def save_stats(stats):
         None
     """
     with open(WORDLE_STATS_FILE, 'w', encoding='utf-8') as stats_file:
-        json.dump(stats, stats_file)
+        json.dump(stats, stats_file, indent=4)
