@@ -21,6 +21,7 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
 from collections import Counter
 from utils import quiet_print
 
+
 class ProbabilisticSolver:
     """
     A class used to guess words based on the probabilities of each letter at each position in a
