@@ -67,7 +67,7 @@ def finalize_stats(args, stats, solution, tries):
     Update the statistics based on the solution and number of tries.
 
     Parameters:
-        args (dict): The arguments passed to the function.
+        args (argparse.Namespace): The arguments passed to the function.
         stats (dict): The current statistics dictionary.
         solution (str): The solution string.
         tries (int): The number of tries it took to solve the solution.
