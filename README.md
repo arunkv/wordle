@@ -60,5 +60,3 @@ Wordle solved in 2 tries
 ## License
 
 Apache License 2.0
-
-Includes [Enhanced North American Benchmark LExicon (ENABLE) 2K word list](http://wiki.puzzlers.org/dokuwiki/doku.php?id=solving:wordlists:about:enable_readme).
