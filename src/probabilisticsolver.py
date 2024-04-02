@@ -19,6 +19,7 @@ you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 """
 from collections import Counter
+
 from utils import quiet_print
 
 
@@ -47,6 +48,7 @@ class ProbabilisticSolver:
     compute_word_score(word):
         Computes score for a given word based on the probabilities of each letter at each position.
     """
+
     def __init__(self, quiet, words):
         self.quiet = quiet
         self.letter_probabilities = ProbabilisticSolver.compute_letter_probabilities(words)
