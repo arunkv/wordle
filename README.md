@@ -29,26 +29,29 @@ NYTimes Wordle game: https://www.nytimes.com/games/wordle/index.html
 ## Example
 ![Example Wordle game](./wordlegame.png)
 ```
-❯ ./wordle.py
-Guess: soree
-Response (i for invalid word, x for no match, o for partial match, = for exact match)? xxxx=
-Guess: ceile
-Response (i for invalid word, x for no match, o for partial match, = for exact match)? i
-Guess: alite
-Response (i for invalid word, x for no match, o for partial match, = for exact match)? i
-Guess: alate
-Response (i for invalid word, x for no match, o for partial match, = for exact match)? xxxx=
-Guess: binge
-Response (i for invalid word, x for no match, o for partial match, = for exact match)? x=xx=
-Guess: fifie
-Response (i for invalid word, x for no match, o for partial match, = for exact match)? i
-Guess: pixie
-Response (i for invalid word, x for no match, o for partial match, = for exact match)? ==xx=
-Guess: piece
-Response (i for invalid word, x for no match, o for partial match, = for exact match)? ==xx=
-Guess: pique
-Response (i for invalid word, x for no match, o for partial match, = for exact match)? =====
-Wordle solved in 6 tries
+❯ dist/wordle -d wordle_words.txt -n -w sorry
+Round: 1
+Current possible answers: 2309
+Best guesses:
+        - slate: (0.62)
+        - sauce: (0.61)
+        - slice: (0.61)
+        - shale: (0.61)
+        - saute: (0.60)
+Guess: slate
+Response: █████
+
+Round: 2
+Current possible answers: 56
+Best guesses:
+        - sorry: (0.57)
+        - shiny: (0.57)
+        - spiny: (0.54)
+        - sunny: (0.53)
+        - spicy: (0.52)
+Guess: sorry
+Response: █████
+Wordle solved in 2 tries
 ```
 
 ## CI Status
