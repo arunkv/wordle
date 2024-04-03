@@ -270,9 +270,11 @@ def solve(args):
         if args.non_interactive:
             for word in all_words:
                 solver_worker(all_words, word, args, solver, stats)
+                print()
         else:
             while True:
                 solver_worker(all_words, None, args, solver, stats)
+                print()
     else:
         solver_worker(all_words, args.word, args, solver, stats)
     save_stats(stats)
