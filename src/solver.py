@@ -72,21 +72,41 @@ def get_response_non_interactive(word, guess):
     Returns:
         str: The response string.
     """
-    response = ''
-    for word_letter, guess_letter in zip(word, guess):
-        if word_letter == guess_letter:
-            response += '='
-        elif guess_letter in word:
-            num_occurrences = Counter(word)[guess_letter]
-            num_exact_matches = sum(1 for w, g in zip(word, guess)
-                                    if w == guess_letter and g == guess_letter)
-            if num_exact_matches == 0 or num_occurrences > num_exact_matches:
-                response += 'o'
+    word_len = len(word)
+    letters_left = word_len
+    response = [''] * word_len
+
+    # Process exact matches first
+    for i, guess_letter in enumerate(guess):
+        if word[i] == guess_letter:
+            response[i] = '='
+            letters_left -= 1
+
+    # Process partial matches
+    potential_partials = []
+    for i, guess_letter in enumerate(guess):
+        if response[i] == '':
+
+            guess_letter_match_count = len([j for j, letter in enumerate(word)
+                                            if letter == guess_letter and response[j] != '='])
+            if guess_letter_match_count > 0:
+                potential_partials.append((i, guess_letter, guess_letter_match_count))
             else:
-                response += 'x'
+                response[i] = 'x'
+                letters_left -= 1
+    potential_partial_index = 0
+    while letters_left > 0:
+        i, guess_letter, guess_letter_match_count = potential_partials[potential_partial_index]
+        if guess_letter_match_count > 0:
+            response[i] = 'o'
+            for j, match in enumerate(potential_partials):
+                if match[0] != i and match[1] == guess_letter:
+                    potential_partials[j] = (match[0], match[1], match[2] - 1)
         else:
-            response += 'x'
-    return response
+            response[i] = 'x'
+        letters_left -= 1
+        potential_partial_index += 1
+    return ''.join(response)
 
 
 def display_response(quiet, response):
