@@ -144,11 +144,11 @@ def display_response(quiet, response):
         print("Response: ", end='')
         for char in response:
             if char == '=':
-                print('\033[92m' + '█' + '\033[0m', end='')
+                print('\033[92m\u2589\033[0m', end='')
             elif char == 'o':
-                print('\033[93m' + '█' + '\033[0m', end='')
+                print('\033[93m\u2589\033[0m', end='')
             else:
-                print('\033[91m' + '█' + '\033[0m', end='')
+                print('\033[91m\u2589\033[0m', end='')
         print()
 
 
