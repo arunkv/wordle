@@ -78,11 +78,12 @@ def update_solved_stats(stats, solution, tries):
     stats['tries'][solution] = tries
 
 
-def update_failed_stats(args, stats):
+def update_failed_stats(word, args, stats):
     """
     Update the 'failed' stats with the given arguments and statistics.
 
     Parameters:
+    word (str): The word that was not solved (non-interactive mode).
     args (argparse.Namespace): The arguments for the function.
     stats (dict): The statistics to update.
 
@@ -91,7 +92,7 @@ def update_failed_stats(args, stats):
     """
     stats['failed'] = stats.get('failed', [])
     if args.non_interactive:
-        stats['failed'].append(args.word)
+        stats['failed'].append(word)
     else:
         word = input(FAILURE_PROMPT)
         if word:
@@ -99,11 +100,12 @@ def update_failed_stats(args, stats):
     stats['failed'] = sorted(list(set(stats['failed'])))  # Remove duplicates
 
 
-def finalize_stats(args, stats, solution, tries):
+def finalize_stats(word, args, stats, solution, tries):
     """
     Update the statistics based on the solution and number of tries.
 
     Parameters:
+        word (str): The word to solve in non-interactive mode.
         args (argparse.Namespace): The arguments passed to the function.
         stats (dict): The current statistics dictionary.
         solution (str): The solution string.
@@ -116,4 +118,4 @@ def finalize_stats(args, stats, solution, tries):
         update_solved_stats(stats, solution, tries)
     else:
         quiet_print(args.quiet, "Failed to solve the Wordle!")
-        update_failed_stats(args, stats)
+        update_failed_stats(word, args, stats)

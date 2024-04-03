@@ -267,22 +267,22 @@ def solve(args):
     if args.continuous:
         if args.non_interactive:
             for word in all_words:
-                args.word = word
-                solver_worker(all_words, args, solver, stats)
+                solver_worker(all_words, word, args, solver, stats)
         else:
             while True:
-                solver_worker(all_words, args, solver, stats)
+                solver_worker(all_words, None, args, solver, stats)
     else:
-        solver_worker(all_words, args, solver, stats)
+        solver_worker(all_words, args.word, args, solver, stats)
     save_stats(stats)
 
 
-def solver_worker(all_words, args, solver, stats):
+def solver_worker(all_words, word, args, solver, stats):
     """
     A function that serves as a solver worker, iterating through a list of words and processing
     responses until a solution is found or the maximum number of tries is reached.
     Parameters:
     - all_words: a list of all words
+    - word: the word to solve in non-interactive mode
     - args: a dictionary of arguments
     - solver: the solver object
     - stats: a dictionary containing statistics
@@ -310,7 +310,7 @@ def solver_worker(all_words, args, solver, stats):
         tries += 1
 
         # Get the response
-        response = get_response(args.non_interactive, args.word, guess, args.len)
+        response = get_response(args.non_interactive, word, guess, args.len)
         display_response(args.quiet, response)
 
         # Process the response
@@ -333,4 +333,4 @@ def solver_worker(all_words, args, solver, stats):
         logging.info("Words left: %s", len(words))
         logging.debug("Words: %s", words)
         quiet_print(args.quiet, "")  # New line for better readability
-    finalize_stats(args, stats, solution, tries)
+    finalize_stats(word, args, stats, solution, tries)
