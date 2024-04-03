@@ -74,4 +74,8 @@ def parse_arguments():
 
 
 if __name__ == '__main__':
-    solve(parse_arguments())
+    try:
+        solve(parse_arguments())
+    except KeyboardInterrupt:
+        logging.info("Game interrupted by user")
+        print()
