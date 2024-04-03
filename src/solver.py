@@ -264,7 +264,7 @@ def solve(args):
                         if len(word) == args.len and not word[0].isupper()])
     logging.info("Word list loaded with %s words", len(all_words))
     # solver = PositionProbabilitySolver(args.quiet, all_words)
-    solver = WordProbabilitySolver(args.quiet, all_words, 'reuters')
+    solver = WordProbabilitySolver(args.quiet, all_words, ['brown', 'reuters'])
     stats = load_stats()
     if args.continuous:
         if args.non_interactive:
