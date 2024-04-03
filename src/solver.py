@@ -25,7 +25,8 @@ import logging
 import string
 from collections import Counter
 
-from constants import NLTK_CORPUSES, RESPONSE_PROMPT
+# from constants import NLTK_CORPUSES
+from constants import RESPONSE_PROMPT
 from positionprobabilitysolver import PositionProbabilitySolver
 # from wordprobabilitysolver import WordProbabilitySolver
 from stats import finalize_stats, load_stats, save_stats
