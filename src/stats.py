@@ -117,5 +117,3 @@ def finalize_stats(args, stats, solution, tries):
     else:
         quiet_print(args.quiet, "Failed to solve the Wordle!")
         update_failed_stats(args, stats)
-
-    save_stats(stats)
