@@ -90,4 +90,6 @@ def finalize_stats(args, stats, solution, tries):
             word = input(FAILURE_PROMPT)
             if word:
                 stats['failed'].append(word)
+        stats['failed'] = list(set(stats['failed']))  # Remove duplicates
+
     save_stats(stats)
