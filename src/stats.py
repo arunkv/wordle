@@ -96,7 +96,7 @@ def update_failed_stats(args, stats):
         word = input(FAILURE_PROMPT)
         if word:
             stats['failed'].append(word)
-    stats['failed'] = list(set(stats['failed']))  # Remove duplicates
+    stats['failed'] = sorted(list(set(stats['failed'])))  # Remove duplicates
 
 
 def finalize_stats(args, stats, solution, tries):
