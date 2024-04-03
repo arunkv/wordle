@@ -26,7 +26,7 @@ import string
 from collections import Counter
 
 from constants import RESPONSE_PROMPT
-from probabilisticsolver import ProbabilisticSolver
+from positionprobabilitysolver import PositionProbabilitySolver
 from stats import finalize_stats, load_stats, save_stats
 from utils import quiet_print
 from wordlist import get_word_list
@@ -262,7 +262,7 @@ def solve(args):
     all_words = sorted([word for word in get_word_list(args.dict)
                         if len(word) == args.len and not word[0].isupper()])
     logging.info("Word list loaded with %s words", len(all_words))
-    solver = ProbabilisticSolver(args.quiet, all_words)
+    solver = PositionProbabilitySolver(args.quiet, all_words)
     stats = load_stats()
     if args.continuous:
         if args.non_interactive:

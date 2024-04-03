@@ -23,7 +23,7 @@ from collections import Counter
 from utils import quiet_print
 
 
-class ProbabilisticSolver:
+class PositionProbabilitySolver:
     """
     A class used to guess words based on the probabilities of each letter at each position in a
     given list of words.
@@ -51,7 +51,7 @@ class ProbabilisticSolver:
 
     def __init__(self, quiet, words):
         self.quiet = quiet
-        self.letter_probabilities = ProbabilisticSolver.compute_letter_probabilities(words)
+        self.letter_probabilities = PositionProbabilitySolver.compute_letter_probabilities(words)
 
     def guess(self, words):
         """
