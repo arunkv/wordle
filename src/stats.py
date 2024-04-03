@@ -62,6 +62,43 @@ def save_stats(stats):
         json.dump(stats, stats_file, indent=4)
 
 
+def update_solved_stats(stats, solution, tries):
+    """
+    Updates the statistics dictionary with information about a newly solved problem.
+
+    Parameters:
+    - stats (dict): A dictionary containing statistics about solved problems.
+    - solution (str): The solution to the newly solved problem.
+    - tries (int): The number of tries it took to solve the problem.
+    """
+    stats['solved'] = stats.get('solved', 0) + 1
+    stats['average_tries'] = \
+        (stats.get('average_tries', 0) * (stats['solved'] - 1) + tries) / stats['solved']
+    stats['tries'] = stats.get('tries', {})
+    stats['tries'][solution] = tries
+
+
+def update_failed_stats(args, stats):
+    """
+    Update the 'failed' stats with the given arguments and statistics.
+
+    Parameters:
+    args (argparse.Namespace): The arguments for the function.
+    stats (dict): The statistics to update.
+
+    Returns:
+    None
+    """
+    stats['failed'] = stats.get('failed', [])
+    if args.non_interactive:
+        stats['failed'].append(args.word)
+    else:
+        word = input(FAILURE_PROMPT)
+        if word:
+            stats['failed'].append(word)
+    stats['failed'] = list(set(stats['failed']))  # Remove duplicates
+
+
 def finalize_stats(args, stats, solution, tries):
     """
     Update the statistics based on the solution and number of tries.
@@ -76,20 +113,9 @@ def finalize_stats(args, stats, solution, tries):
         None
     """
     if solution:
-        stats['solved'] = stats.get('solved', 0) + 1
-        stats['average_tries'] = \
-            (stats.get('average_tries', 0) * (stats['solved'] - 1) + tries) / stats['solved']
-        stats['tries'] = stats.get('tries', {})
-        stats['tries'][solution] = tries
+        update_solved_stats(stats, solution, tries)
     else:
         quiet_print(args.quiet, "Failed to solve the Wordle!")
-        stats['failed'] = stats.get('failed', [])
-        if args.non_interactive:
-            stats['failed'].append(args.word)
-        else:
-            word = input(FAILURE_PROMPT)
-            if word:
-                stats['failed'].append(word)
-        stats['failed'] = list(set(stats['failed']))  # Remove duplicates
+        update_failed_stats(args, stats)
 
     save_stats(stats)
