@@ -25,7 +25,7 @@ import logging
 import string
 from collections import Counter
 
-from constants import RESPONSE_PROMPT
+from constants import NLTK_CORPUSES, RESPONSE_PROMPT
 from positionprobabilitysolver import PositionProbabilitySolver
 from wordprobabilitysolver import WordProbabilitySolver
 from stats import finalize_stats, load_stats, save_stats
@@ -264,7 +264,7 @@ def solve(args):
                         if len(word) == args.len and not word[0].isupper()])
     logging.info("Word list loaded with %s words", len(all_words))
     # solver = PositionProbabilitySolver(args.quiet, all_words)
-    solver = WordProbabilitySolver(args.quiet, all_words, ['brown', 'reuters'])
+    solver = WordProbabilitySolver(args.quiet, all_words, NLTK_CORPUSES)
     stats = load_stats()
     if args.continuous:
         if args.non_interactive:
