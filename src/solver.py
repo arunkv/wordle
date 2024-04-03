@@ -32,24 +32,23 @@ from utils import quiet_print
 from wordlist import get_word_list
 
 
-def get_response(args, word, guess):
+def get_response(is_non_interactive, word, guess, length):
     """
-    A function that determines the response based on the given arguments and inputs.
+    A function that determines the response based on the given word and guess
 
     Parameters:
-    - args: the arguments passed to the function
-    - word: a word input to be considered
+    - is_interactive: a boolean value indicating whether the game is interactive
+    - word: the word to be compared with
     - guess: the guessed value to be compared with
+    - length: the length of the word
 
     Returns:
     - response: the determined response based on the conditions
     """
-    if args.non_interactive:
-        if args.continuous:
-            args.word = word
-        response = get_response_non_interactive(args.word, guess)
+    if is_non_interactive:
+        response = get_response_non_interactive(word, guess)
     else:
-        response = get_response_interactive(args.len)
+        response = get_response_interactive(length)
     return response
 
 
@@ -263,20 +262,22 @@ def solve(args):
     all_words = sorted([word for word in get_word_list(args.dict)
                         if len(word) == args.len and not word[0].isupper()])
     logging.info("Word list loaded with %s words", len(all_words))
-
     solver = ProbabilisticSolver(args.quiet, all_words)
-    word_index = 0
-
     stats = load_stats()
-    while True:
-        solver_worker(all_words, args, solver, stats, word_index)
-        word_index += 1
-        if not args.continuous or word_index == len(all_words):
-            break
+    if args.continuous:
+        if args.non_interactive:
+            for word in all_words:
+                args.word = word
+                solver_worker(all_words, args, solver, stats)
+        else:
+            while True:
+                solver_worker(all_words, args, solver, stats)
+    else:
+        solver_worker(all_words, args, solver, stats)
     save_stats(stats)
 
 
-def solver_worker(all_words, args, solver, stats, word_index):
+def solver_worker(all_words, args, solver, stats):
     """
     A function that serves as a solver worker, iterating through a list of words and processing
     responses until a solution is found or the maximum number of tries is reached.
@@ -285,7 +286,6 @@ def solver_worker(all_words, args, solver, stats, word_index):
     - args: a dictionary of arguments
     - solver: the solver object
     - stats: a dictionary containing statistics
-    - word_index: the index of the current word being processed
     Returns:
     - None
     """
@@ -295,7 +295,6 @@ def solver_worker(all_words, args, solver, stats, word_index):
     solution = None
     tries = 0
     words = all_words.copy()
-    word = all_words[word_index]
     while tries < args.tries:
         if len(words) == 0:
             quiet_print(args.quiet, "No words left in the dictionary!")
@@ -311,7 +310,7 @@ def solver_worker(all_words, args, solver, stats, word_index):
         tries += 1
 
         # Get the response
-        response = get_response(args, word, guess)
+        response = get_response(args.non_interactive, args.word, guess, args.len)
         display_response(args.quiet, response)
 
         # Process the response
