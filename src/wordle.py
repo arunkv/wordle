@@ -57,11 +57,16 @@ def parse_arguments():
                         help='Turn on non-interactive mode by providing the word to guess')
     parser.add_argument('-w', '--word', type=str,
                         help='The word to solve in non-interactive mode')
+    parser.add_argument('-c', '--continuous', action='store_true', default=False,
+                        help='Continuous mode; uses all words in the dictionary')
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
     args = parser.parse_args()
-    if args.non_interactive and not args.word:
-        parser.error('-n|--non-interactive requires -w|--word')
-    elif not args.non_interactive and args.word is not None:
+    if args.non_interactive:
+        if not (args.word or args.continuous):
+            parser.error('-n|--non-interactive requires -w|--word or -c|--continuous')
+        elif args.word and args.continuous:
+            parser.error("-w|--word and -c|--continuous arguments are mutually exclusive")
+    elif args.word is not None:
         parser.error("-w|--word argument should not be used without -n|--non-interactive")
     args.len = args.len or constants.DEFAULT_WORD_LENGTH
     args.tries = args.tries or constants.DEFAULT_TRIES

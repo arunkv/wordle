@@ -27,12 +27,33 @@ from collections import Counter
 
 from constants import RESPONSE_PROMPT
 from probabilisticsolver import ProbabilisticSolver
-from stats import load_stats, finalize_stats
+from stats import finalize_stats, load_stats
 from utils import quiet_print
 from wordlist import get_word_list
 
 
-def get_response(length):
+def get_response(args, word, guess):
+    """
+    A function that determines the response based on the given arguments and inputs.
+
+    Parameters:
+    - args: the arguments passed to the function
+    - word: a word input to be considered
+    - guess: the guessed value to be compared with
+
+    Returns:
+    - response: the determined response based on the conditions
+    """
+    if args.non_interactive:
+        if args.continuous:
+            args.word = word
+        response = get_response_non_interactive(args.word, guess)
+    else:
+        response = get_response_interactive(args.len)
+    return response
+
+
+def get_response_interactive(length):
     """
     Prompts the user for a response and validates it.
 
@@ -239,59 +260,62 @@ def solve(args):
     Returns:
         None
     """
-    words = [word for word in get_word_list(args.dict)
-             if len(word) == args.len and not word[0].isupper()]
-    logging.info("Word list loaded with %s words", len(words))
+    all_words = sorted([word for word in get_word_list(args.dict)
+                        if len(word) == args.len and not word[0].isupper()])
+    logging.info("Word list loaded with %s words", len(all_words))
 
-    solver = ProbabilisticSolver(args.quiet, words)
-    search_space = [set(string.ascii_lowercase) for _ in range(args.len)]
-    known_letters = []
-    solution = None
+    solver = ProbabilisticSolver(args.quiet, all_words)
+    word_index = 0
 
-    stats = load_stats()
-    stats['played'] = stats.get('played', 0) + 1
+    while True:
+        stats = load_stats()
+        stats['played'] = stats.get('played', 0) + 1
 
-    tries = 0
-    while tries < args.tries:
-        if len(words) == 0:
-            quiet_print(args.quiet, "No words left in the dictionary!")
+        search_space = [set(string.ascii_lowercase) for _ in range(args.len)]
+        known_letters = []
+        solution = None
+        tries = 0
+        words = all_words.copy()
+        word = all_words[word_index]
+        word_index += 1
+        while tries < args.tries:
+            if len(words) == 0:
+                quiet_print(args.quiet, "No words left in the dictionary!")
+                break
+
+            quiet_print(args.quiet, f"Round: {(tries + 1)}")
+            quiet_print(args.quiet, f"Current possible answers: {len(words)}")
+
+            # Generate a guess
+            guess = solver.guess(words)
+            words.remove(guess)
+            quiet_print(args.quiet, f"Guess: {guess}")
+            tries += 1
+
+            # Get the response
+            response = get_response(args, word, guess)
+            display_response(args.quiet, response)
+
+            # Process the response
+            if response == 'q':  # Exit
+                quiet_print(args.quiet, "Aborting!")
+                break
+            if response == 'i':  # Try another word since Wordle didn't accept this word
+                tries -= 1
+                continue
+            if response == '=' * args.len:  # Wordle solved
+                quiet_print(args.quiet, f"Wordle solved in {tries} tries")
+                solution = guess
+                break
+            process_response(guess, response, search_space, known_letters, args.len)
+
+            # Trim the word list based on the search space and known letters
+            logging.debug("Known letters: %s", known_letters)
+            logging.debug("Search space: %s", search_space)
+            words = trim_word_list_by_search_space(words, search_space, known_letters)
+            logging.info("Words left: %s", len(words))
+            logging.debug("Words: %s", words)
+            quiet_print(args.quiet, "")  # New line for better readability
+        finalize_stats(args, stats, solution, tries)
+        if not args.continuous or word_index == len(all_words):
             break
-
-        quiet_print(args.quiet, f"Round: {(tries + 1)}")
-        quiet_print(args.quiet, f"Current possible answers: {len(words)}")
-
-        # Generate a guess
-        guess = solver.guess(words)
-        words.remove(guess)
-        quiet_print(args.quiet, f"Guess: {guess}")
-        tries += 1
-
-        # Get the response
-        if args.non_interactive:
-            response = get_response_non_interactive(args.word, guess)
-        else:
-            response = get_response(args.len)
-        display_response(args.quiet, response)
-
-        # Process the response
-        if response == 'q':  # Exit
-            quiet_print(args.quiet, "Aborting!")
-            break
-        if response == 'i':  # Try another word since Wordle didn't accept this word
-            tries -= 1
-            continue
-        if response == '=' * args.len:  # Wordle solved
-            quiet_print(args.quiet, f"Wordle solved in {tries} tries")
-            solution = guess
-            break
-        process_response(guess, response, search_space, known_letters, args.len)
-
-        # Trim the word list based on the search space and known letters
-        logging.debug("Known letters: %s", known_letters)
-        logging.debug("Search space: %s", search_space)
-        words = trim_word_list_by_search_space(words, search_space, known_letters)
-        logging.info("Words left: %s", len(words))
-        logging.debug("Words: %s", words)
-        quiet_print(args.quiet, "")  # New line for better readability
-
-    finalize_stats(args, stats, solution, tries)

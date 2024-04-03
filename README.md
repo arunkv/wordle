@@ -13,16 +13,17 @@ NYTimes Wordle game: https://www.nytimes.com/games/wordle/index.html
 
 ## Usage
 
-> `usage: wordle.py [-h] -d DICT [DICT ...] [-l LEN] [-t TRIES] [-n] [-w WORD] [-q]`
+> `src/wordle.py [-h] -d DICT [DICT ...] [-l LEN] [-t TRIES] [-n] [-w WORD] [-c] [-q]`
 
 ### Options:
 ```
-  -h, --help                                 show this help message and exit
+  -h, --help                                 Show this help message and exit
   -d DICT [DICT ...], --dict DICT [DICT ...] Dictionary files
   -l LEN, --len LEN                          Word length (default: 5)
   -t TRIES, --tries TRIES                    Maximum tries (default: 6)
   -n, --non-interactive                      Turn on non-interactive mode by providing the word to guess
   -w WORD, --word WORD                       The word to solve in non-interactive mode
+  -c, --continuous                           Continuous mode; uses all words in the dictionary
   -q, --quiet                                Quiet mode
 ```
 
