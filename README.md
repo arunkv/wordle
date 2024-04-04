@@ -56,12 +56,14 @@ Wordle solved in 2 tries
 ```
 
 ## Statistics
-The probabilistic solver solves the Wordle words (found in `wordle_words.txt`) in an average of 3.76 tries. On an M1 
-MacBook Pro (2020), on average, the solver takes about 15 milliseconds to solve a word. Of the 2309 words in the word 
-list, the solver is able to solve 2287 words (99% success rate) within the maximum of 6 tries. With the larger ENABLE
-2K word list (8672 five-letter words), the solver is able to solve 7579 words (87.4% success rate) in an average of 
-4.41 tries.
 
+| Word List         | Words | Success Rate | Average Tries | Average Time Per Word (ms) |
+|-------------------|-------|--------------|---------------|----------------------------|
+| Wordle (original) | 2309  | 99.0%        | 3.76          | 15                         |
+| ENABLE 2K         | 8672  | 87.4%        | 4.41          | 20                         |
+| NYTimes Extended  | 14855 | 83.2%        | 4.57          | 26                         |
+
+_Timing from 2020 M1 MacBook Pro_
 
 ## CI Status
 [![CodeQL](https://github.com/arunkv/wordle/actions/workflows/codeql.yml/badge.svg)](https://github.com/arunkv/wordle/actions/workflows/codeql.yml) [![Pylint](https://github.com/arunkv/wordle/actions/workflows/pylint.yml/badge.svg)](https://github.com/arunkv/wordle/actions/workflows/pylint.yml) [![Qodana](https://github.com/arunkv/wordle/actions/workflows/qodana_code_quality.yml/badge.svg)](https://github.com/arunkv/wordle/actions/workflows/qodana_code_quality.yml)
