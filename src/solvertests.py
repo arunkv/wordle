@@ -8,7 +8,7 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
 """
 import unittest
 
-from solver import get_response_non_interactive
+from responses import get_response_non_interactive
 
 
 class SolverTestCase(unittest.TestCase):

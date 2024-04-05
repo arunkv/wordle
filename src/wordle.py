@@ -59,6 +59,9 @@ def parse_arguments():
                         help='The word to solve in non-interactive mode')
     parser.add_argument('-c', '--continuous', action='store_true', default=False,
                         help='Continuous mode; uses all words in the dictionary')
+    parser.add_argument('-s', '--solver', type=str, default='position',
+                        choices=['position', 'word', 'entropy'],
+                        help='Solver to use (default: position)')
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
     args = parser.parse_args()
     if args.non_interactive:

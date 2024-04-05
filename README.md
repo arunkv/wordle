@@ -24,6 +24,7 @@ NYTimes Wordle game: https://www.nytimes.com/games/wordle/index.html
   -n, --non-interactive                      Turn on non-interactive mode by providing the word to guess
   -w WORD, --word WORD                       The word to solve in non-interactive mode
   -c, --continuous                           Continuous mode; uses all words in the dictionary
+  -s, --solver                               Solver to use (default: position)
   -q, --quiet                                Quiet mode
 ```
 
