@@ -13,7 +13,7 @@ from collections import defaultdict
 
 from responses import get_response_non_interactive
 from constants import EXACT_MATCH, PARTIAL_MATCH
-from utils import print_best_guesses, quiet_print
+from utils import print_best_guesses
 
 
 class EntropySolver:

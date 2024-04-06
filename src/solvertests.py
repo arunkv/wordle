@@ -12,6 +12,17 @@ from responses import get_response_non_interactive
 
 
 class SolverTestCase(unittest.TestCase):
+    """
+    The SolverTestCase class is a subclass of unittest.TestCase, which is used for testing the
+    Wordle solver implemented in the `solver.py` module.
+
+    Attributes:
+        None
+
+    Methods:
+        test_guess_vs_word(self): A test function to compare the output of
+        get_response_non_interactive with expected values.
+    """
     def test_guess_vs_word(self):
         """
         A test function to compare the output of get_response_non_interactive with expected values.
