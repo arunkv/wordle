@@ -18,7 +18,7 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
 """
 import logging
 
-from constants import RESPONSE_PROMPT
+from constants import EXACT_MATCH, NO_MATCH, PARTIAL_MATCH, RESPONSE_PROMPT
 
 
 def get_response(is_non_interactive, word, guess, length):
@@ -88,7 +88,7 @@ def get_response_non_interactive(word, guess):
     # Process exact matches first
     for i, guess_letter in enumerate(guess):
         if word[i] == guess_letter:
-            response[i] = '='
+            response[i] = EXACT_MATCH
             letters_left -= 1
 
     # Process partial matches
@@ -96,23 +96,24 @@ def get_response_non_interactive(word, guess):
     for i, guess_letter in enumerate(guess):
         if response[i] == '':
 
-            guess_letter_match_count = len([j for j, letter in enumerate(word)
-                                            if letter == guess_letter and response[j] != '='])
+            guess_letter_match_count = (
+                len([j for j, letter in enumerate(word)
+                     if letter == guess_letter and response[j] != EXACT_MATCH]))
             if guess_letter_match_count > 0:
                 potential_partials.append((i, guess_letter, guess_letter_match_count))
             else:
-                response[i] = 'x'
+                response[i] = NO_MATCH
                 letters_left -= 1
     potential_partial_index = 0
     while letters_left > 0:
         i, guess_letter, guess_letter_match_count = potential_partials[potential_partial_index]
         if guess_letter_match_count > 0:
-            response[i] = 'o'
+            response[i] = PARTIAL_MATCH
             for j, match in enumerate(potential_partials):
                 if match[0] != i and match[1] == guess_letter:
                     potential_partials[j] = (match[0], match[1], match[2] - 1)
         else:
-            response[i] = 'x'
+            response[i] = NO_MATCH
         letters_left -= 1
         potential_partial_index += 1
     return ''.join(response)
@@ -132,9 +133,9 @@ def display_response(quiet, response):
     if not quiet:
         print("Response: ", end='')
         for char in response:
-            if char == '=':
+            if char == EXACT_MATCH:
                 print('\033[92m\u2589\033[0m', end='')
-            elif char == 'o':
+            elif char == PARTIAL_MATCH:
                 print('\033[93m\u2589\033[0m', end='')
             else:
                 print('\033[91m\u2589\033[0m', end='')
@@ -163,27 +164,27 @@ def process_response(guess, response, search_space, known_letters, length):
     known_letters.clear()
     # Process '=' responses first
     for i, response_letter in enumerate(response):
-        if response_letter == '=':
+        if response_letter == EXACT_MATCH:
             known_letters.append(guess[i])
             search_space[i] = {guess[i]}
 
     # Then process 'o' responses
     for i, response_letter in enumerate(response):
-        if response_letter == 'o':
+        if response_letter == PARTIAL_MATCH:
             known_letters.append(guess[i])
             search_space[i].discard(guess[i])
 
     # Finally, process 'x' responses
     for i, response_letter in enumerate(response):
-        if response_letter == 'x':
+        if response_letter == NO_MATCH:
             search_space[i].discard(guess[i])
             other_exact_match_positions = set()
             other_partial_match_positions = set()
             for j, _ in enumerate(search_space):
                 if j != i and guess[j] == guess[i]:
-                    if response[j] == 'o':
+                    if response[j] == PARTIAL_MATCH:
                         other_partial_match_positions.add(j)
-                    elif response[j] == '=':
+                    elif response[j] == EXACT_MATCH:
                         other_exact_match_positions.add(j)
             if not other_partial_match_positions:
                 for j in set(range(length)) - {i} - other_exact_match_positions:

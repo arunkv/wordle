@@ -12,6 +12,7 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
 from collections import defaultdict
 
 from responses import get_response_non_interactive
+from constants import EXACT_MATCH, PARTIAL_MATCH
 from utils import quiet_print
 
 
@@ -107,8 +108,8 @@ class EntropySolver:
         """
         score = 0
         for char in response:
-            if char == '=':
+            if char == EXACT_MATCH:
                 score += 1
-            elif char == 'o':
+            elif char == PARTIAL_MATCH:
                 score += 0.3
         return score

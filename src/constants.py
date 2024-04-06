@@ -27,7 +27,11 @@ DEFAULT_WORD_LENGTH = 5
 DEFAULT_TRIES = DEFAULT_WORD_LENGTH + 1
 LOG_FILE = 'wordle.log'
 WORDLE_STATS_FILE = 'wordle_stats.json'
-RESPONSE_PROMPT = "Response (q quit, i invalid, x no match, o partial match, = exact match)? "
 FAILURE_PROMPT = "Please provide the correct word: "
 DEFAULT_NLTK_CORPUSES = ['brown']
 NLTK_CORPUSES = ['brown', 'reuters', 'webtext', 'inaugural', 'nps_chat', 'treebank', 'wordnet']
+NO_MATCH = 'x'
+PARTIAL_MATCH = 'o'
+EXACT_MATCH = '='
+RESPONSE_PROMPT = (f"Response (q quit, i invalid, {NO_MATCH} no match, {PARTIAL_MATCH} partial "
+                   f"match, {EXACT_MATCH} exact match)?")

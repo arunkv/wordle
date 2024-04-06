@@ -26,8 +26,7 @@ import string
 import time
 from collections import Counter
 
-# from constants import NLTK_CORPUSES
-from constants import NLTK_CORPUSES
+from constants import EXACT_MATCH, NLTK_CORPUSES
 from entropysolver import EntropySolver
 from positionprobabilitysolver import PositionProbabilitySolver
 from responses import display_response, get_response, process_response
@@ -170,7 +169,7 @@ def solver_worker(all_words, word, args, solver, stats):
         if response == 'i':  # Try another word since Wordle didn't accept this word
             tries -= 1
             continue
-        if response == '=' * args.len:  # Wordle solved
+        if response == EXACT_MATCH * args.len:  # Wordle solved
             quiet_print(args.quiet, f"Wordle solved in {tries} tries")
             solution = guess
             break
