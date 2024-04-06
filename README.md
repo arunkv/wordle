@@ -58,11 +58,37 @@ Wordle solved in 2 tries
 
 ## Statistics
 
+### Letter Position Probability 
+
+This solver uses the probability of letters in each position to determine the best possible guess.
+
 | Word List         | Words | Success Rate | Average Tries | Average Time Per Word (ms) |
 |-------------------|-------|--------------|---------------|----------------------------|
 | Wordle (original) | 2309  | 99.0%        | 3.76          | 15                         |
 | ENABLE 2K         | 8672  | 87.4%        | 4.41          | 20                         |
 | NYTimes Extended  | 14855 | 83.2%        | 4.57          | 26                         |
+
+### Word Probability
+
+This solver uses the probability of words in well known NLTK corpuses to determine the best possible guess.
+
+| Word List         | Words | Success Rate | Average Tries | Average Time Per Word (ms) |
+|-------------------|-------|--------------|---------------|----------------------------|
+| Wordle (original) | 2309  |              |               |                            |
+| ENABLE 2K         | 8672  |              |               |                            |
+| NYTimes Extended  | 14855 |              |               |                            |
+
+
+### Entropy
+
+This solver uses the entropy of the words to determine the best guess. The entropy score is calculated based on the 
+probability of resulting in greater number of exact or partial matches from a given guess. Computation of this
+score is more time-consuming than the position probability solver.
+
+| Word List         | Words | Success Rate | Average Tries | Average Time Per Word (ms) |
+|-------------------|-------|--------------|---------------|----------------------------|
+| Wordle (original) | 2309  | 98.8%        | 3.69          | 30                         |
+
 
 _Timing from 2020 M1 MacBook Pro_
 

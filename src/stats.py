@@ -119,3 +119,21 @@ def finalize_stats(word, args, stats, solution, tries):
     else:
         quiet_print(args.quiet, "Failed to solve the Wordle!")
         update_failed_stats(word, args, stats)
+
+
+def display_stats(stats):
+    """
+    Display the game statistics to the user.
+
+    Parameters:
+    - stats (dict): A dictionary containing the game statistics.
+    """
+    print("Wordle Game Statistics")
+    print("----------------------")
+    print(f"Games Played: {stats.get('played', 0)}")
+    print(f"Games Solved: {stats.get('solved', 0)}")
+    print(f"Average Tries: {stats.get('average_tries', 0):.2f}")
+    if stats.get('played', 0) > 0:
+        print(f"Success Rate: {stats['solved'] / stats['played'] * 100:.1f} %")
+        if stats['solve_time']:
+            print(f"Solve Time Per Game: {stats['solve_time'] / stats['played'] * 1000:.0f} ms")

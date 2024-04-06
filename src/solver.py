@@ -23,17 +23,18 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
 
 import logging
 import string
+import time
 from collections import Counter
 
 # from constants import NLTK_CORPUSES
 from constants import NLTK_CORPUSES
-from positionprobabilitysolver import PositionProbabilitySolver
 from entropysolver import EntropySolver
+from positionprobabilitysolver import PositionProbabilitySolver
 from responses import display_response, get_response, process_response
-from wordprobabilitysolver import WordProbabilitySolver
-from stats import finalize_stats, load_stats, save_stats
+from stats import display_stats, finalize_stats, load_stats, save_stats
 from utils import quiet_print
 from wordlist import get_word_list
+from wordprobabilitysolver import WordProbabilitySolver
 
 
 def trim_word_list_by_search_space(word_list, search_space, known_letters):
@@ -94,6 +95,7 @@ def solve(args):
     Returns:
         None
     """
+    start_time = time.time()
     all_words = sorted([word for word in get_word_list(args.dict)
                         if len(word) == args.len and not word[0].isupper()])
     logging.info("Word list loaded with %s words", len(all_words))
@@ -118,6 +120,10 @@ def solve(args):
     else:
         solver_worker(all_words, args.word, args, solver, stats)
     save_stats(stats)
+    end_time = time.time()
+    if args.non_interactive:
+        stats['solve_time'] = end_time - start_time
+        display_stats(stats)
 
 
 def solver_worker(all_words, word, args, solver, stats):

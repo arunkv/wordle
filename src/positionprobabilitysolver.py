@@ -67,9 +67,10 @@ class PositionProbabilitySolver:
             str: The word with the highest score.
         """
         word_scores = self.compute_word_scores(words)
-        quiet_print(self.quiet, "Best guesses: ")
-        for _, (word, score) in enumerate(word_scores[:5]):
-            quiet_print(self.quiet, f"\t- {word}: ({score:.2f})")
+        if not self.quiet:
+            quiet_print(self.quiet, "Best guesses: ")
+            for _, (word, score) in enumerate(word_scores[:5]):
+                quiet_print(self.quiet, f"\t- {word}: ({score:.2f})")
         return word_scores[0][0]  # Pick the top probability word
 
     @staticmethod

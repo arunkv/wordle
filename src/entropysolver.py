@@ -9,8 +9,10 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 """
+from collections import defaultdict
 
 from responses import get_response_non_interactive
+from utils import quiet_print
 
 
 class EntropySolver:
@@ -19,7 +21,7 @@ class EntropySolver:
 
     Attributes:
         quiet (bool): A flag indicating whether to run the function quietly.
-        bad_response_percent (list): A list of tuples, each containing a word and its corresponding
+        response_scores (list): A list of tuples, each containing a word and its corresponding
          bad response percentage.
 
     Methods:
@@ -43,7 +45,7 @@ class EntropySolver:
             None
         """
         self.quiet = quiet
-        self.bad_response_percent = self.compute_bad_response_percentages(words)
+        self.response_scores = self.compute_response_scores(words)
 
     def guess(self, words):
         """
@@ -55,12 +57,16 @@ class EntropySolver:
         Returns:
             str: The top guess word with the lowest entropy.
         """
-        word_scores = [item for item in self.bad_response_percent if item[0] in words]
-        word_scores = sorted(word_scores, key=lambda item: item[1])
+        word_scores = [item for item in self.response_scores if item[0] in words]
+        word_scores = sorted(word_scores, key=lambda item: item[1], reverse=True)
+        if not self.quiet:
+            quiet_print(self.quiet, "Best guesses: ")
+            for _, (word, score) in enumerate(word_scores[:5]):
+                quiet_print(self.quiet, f"\t- {word}: ({score:.2f})")
         return word_scores[0][0]
 
     @staticmethod
-    def compute_bad_response_percentages(words):
+    def compute_response_scores(words):
         """
         For each word in words, compare to all other words using the get_response_non_interactive
         function and compute the percentage of words that are resulting in an 'xxxxx' response.
@@ -72,14 +78,37 @@ class EntropySolver:
             dict: A dictionary with each word as the key and the percentage of 'xxxxx' responses
             as the value.
         """
-        response_percentages = []
+        response_scores = []
         for word in words:
-            counter = 0
+            response_freq_map = defaultdict(int)
             for other_word in words:
                 if word != other_word:
                     response = get_response_non_interactive(word, other_word)
-                    if response.count('x') > 0:
-                        counter += 1
-            response_percentages.append((word, (counter / len(words)) * 100))
-        response_percentages = sorted(response_percentages, key=lambda item: item[1])
-        return response_percentages
+                    response_freq_map[response] += 1
+
+            cumulative_response_score = 0
+            for response, freq in response_freq_map.items():
+                response_score = EntropySolver.compute_response_score(response)
+                cumulative_response_score += response_score * freq
+
+            response_scores.append((word, cumulative_response_score / len(words)))
+        return response_scores
+
+    @staticmethod
+    def compute_response_score(response):
+        """
+        Compute the score of a given response based on the occurrences of '=' and 'o' characters.
+
+        Parameters:
+            response (str): The response string to calculate the score from.
+
+        Returns:
+            float: The calculated score based on the response string.
+        """
+        score = 0
+        for char in response:
+            if char == '=':
+                score += 1
+            elif char == 'o':
+                score += 0.3
+        return score
