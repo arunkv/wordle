@@ -20,7 +20,7 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
 """
 from collections import Counter
 
-from utils import quiet_print
+from utils import print_best_guesses
 
 
 class PositionProbabilitySolver:
@@ -67,10 +67,7 @@ class PositionProbabilitySolver:
             str: The word with the highest score.
         """
         word_scores = self.compute_word_scores(words)
-        if not self.quiet:
-            quiet_print(self.quiet, "Best guesses: ")
-            for _, (word, score) in enumerate(word_scores[:5]):
-                quiet_print(self.quiet, f"\t- {word}: ({score:.2f})")
+        print_best_guesses(self.quiet, word_scores)
         return word_scores[0][0]  # Pick the top probability word
 
     @staticmethod

@@ -14,7 +14,7 @@ from collections import Counter
 import nltk
 
 from constants import DEFAULT_NLTK_CORPUSES
-from utils import quiet_print
+from utils import print_best_guesses
 
 
 class WordProbabilitySolver:
@@ -85,8 +85,5 @@ class WordProbabilitySolver:
         """
         word_scores = [(word, self.br_word_freq.get(word, 0)) for word in words]
         word_scores = sorted(word_scores, key=lambda item: item[1], reverse=True)
-        if not self.quiet:
-            quiet_print(self.quiet, "Best guesses: ")
-            for _, (word, score) in enumerate(word_scores[:5]):
-                quiet_print(self.quiet, f"\t- {word}: ({score:.3f})")
-        return word_scores[0][0]  # Pick the top probability word
+        print_best_guesses(self.quiet, word_scores)
+        return word_scores[0][0]

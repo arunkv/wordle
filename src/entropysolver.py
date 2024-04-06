@@ -13,7 +13,7 @@ from collections import defaultdict
 
 from responses import get_response_non_interactive
 from constants import EXACT_MATCH, PARTIAL_MATCH
-from utils import quiet_print
+from utils import print_best_guesses, quiet_print
 
 
 class EntropySolver:
@@ -60,10 +60,7 @@ class EntropySolver:
         """
         word_scores = [item for item in self.response_scores if item[0] in words]
         word_scores = sorted(word_scores, key=lambda item: item[1], reverse=True)
-        if not self.quiet:
-            quiet_print(self.quiet, "Best guesses: ")
-            for _, (word, score) in enumerate(word_scores[:5]):
-                quiet_print(self.quiet, f"\t- {word}: ({score:.2f})")
+        print_best_guesses(self.quiet, word_scores)
         return word_scores[0][0]
 
     @staticmethod

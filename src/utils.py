@@ -27,3 +27,20 @@ def quiet_print(quiet, *args, **kwargs):
     """
     if not quiet:
         print(*args, **kwargs)
+
+
+def print_best_guesses(quiet, word_scores):
+    """
+    A function to display the best guesses based on word scores.
+
+    Parameters:
+    - quiet (bool): Flag to determine if the function should print output quietly.
+    - word_scores (list): List of tuples containing word and corresponding score.
+
+    Returns:
+    - None
+    """
+    if not quiet:
+        quiet_print(quiet, "Best guesses: ")
+        for _, (word, score) in enumerate(word_scores[:5]):
+            quiet_print(quiet, f"\t- {word}: ({score:.3f})")
