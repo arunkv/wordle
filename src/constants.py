@@ -34,4 +34,4 @@ NO_MATCH = 'x'
 PARTIAL_MATCH = 'o'
 EXACT_MATCH = '='
 RESPONSE_PROMPT = (f"Response (q quit, i invalid, {NO_MATCH} no match, {PARTIAL_MATCH} partial "
-                   f"match, {EXACT_MATCH} exact match)?")
+                   f"match, {EXACT_MATCH} exact match)? ")
