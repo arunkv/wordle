@@ -1,14 +1,15 @@
 # Wordle Solver
 
-Solves the Wordle game interactively or optionally non-interactively. 
+Solves the Wordle game interactively or optionally non-interactively.
 
-_Wordle_ is a word puzzle in which the player has to guess a five-letter word within six attempts. After each guess, 
-the player is given feedback on the letters that are correct and in the correct position, correct but in the wrong 
+_Wordle_ is a word puzzle in which the player has to guess a five-letter word within six attempts. After each guess,
+the player is given feedback on the letters that are correct and in the correct position, correct but in the wrong
 position, or incorrect.
 
 NYTimes Wordle game: https://www.nytimes.com/games/wordle/index.html
 
 ## Installation
+
 `pip install -r requirements.txt`
 
 ## Usage
@@ -16,6 +17,7 @@ NYTimes Wordle game: https://www.nytimes.com/games/wordle/index.html
 > `src/wordle.py [-h] -d DICT [DICT ...] [-l LEN] [-t TRIES] [-n] [-w WORD] [-c] [-q]`
 
 ### Options:
+
 ```
   -h, --help                                 Show this help message and exit
   -d DICT [DICT ...], --dict DICT [DICT ...] Dictionary files
@@ -29,9 +31,11 @@ NYTimes Wordle game: https://www.nytimes.com/games/wordle/index.html
 ```
 
 ## Example
+
 ![Example Wordle game](./wordlegame.png)
+
 ```
-❯ dist/wordle -d wordle_words.txt -n -w sorry
+❯ src/wordle.py -d words/word-unscrambler-words.txt -n -w sorry -s entropy
 Round: 1
 Current possible answers: 2309
 Best guesses:
@@ -58,15 +62,15 @@ Wordle solved in 2 tries
 
 ## Statistics
 
-### Letter Position Probability 
+### Letter Position Probability
 
 This solver uses the probability of letters in each position to determine the best possible guess.
 
 | Word List         | Words | Success Rate | Average Tries | Average Time Per Word (ms) |
 |-------------------|-------|--------------|---------------|----------------------------|
-| Wordle (original) | 2309  | 99.0%        | 3.76          | 15                         |
-| ENABLE 2K         | 8672  | 87.4%        | 4.41          | 20                         |
-| NYTimes Extended  | 14855 | 83.2%        | 4.57          | 26                         |
+| Wordle (original) | 2309  | 99.0%        | 3.76          | 3                          |
+| ENABLE 2K         | 8672  | 87.4%        | 4.41          | 13                         |
+| NYTimes Extended  | 14855 | 83.2%        | 4.57          | 22                         |
 
 ### Word Probability
 
@@ -74,25 +78,24 @@ This solver uses the probability of words in well known NLTK corpuses to determi
 
 | Word List         | Words | Success Rate | Average Tries | Average Time Per Word (ms) |
 |-------------------|-------|--------------|---------------|----------------------------|
-| Wordle (original) | 2309  |              |               |                            |
-| ENABLE 2K         | 8672  |              |               |                            |
-| NYTimes Extended  | 14855 |              |               |                            |
+| Wordle (original) | 2309  | 98.1%        | 4.19          | 5                          |
+| ENABLE 2K         | 8672  | 88.5%        | 4.66          | 15                         |
+| NYTimes Extended  | 14855 | 83.2%        | 4.81          | 25                         |
 
+### Entropy Lowering
 
-### Entropy
-
-This solver uses the entropy of the words to determine the best guess. The entropy score is calculated based on the 
+This solver uses the entropy of the words to determine the best guess. The entropy score is calculated based on the
 probability of resulting in greater number of exact or partial matches from a given guess. Computation of this
 score is more time-consuming than the position probability solver.
 
 | Word List         | Words | Success Rate | Average Tries | Average Time Per Word (ms) |
 |-------------------|-------|--------------|---------------|----------------------------|
-| Wordle (original) | 2309  | 98.8%        | 3.69          | 30                         |
-
+| Wordle (original) | 2309  | 98.8%        | 3.69          | 28                         |
 
 _Timing from 2020 M1 MacBook Pro_
 
 ## CI Status
+
 [![CodeQL](https://github.com/arunkv/wordle/actions/workflows/codeql.yml/badge.svg)](https://github.com/arunkv/wordle/actions/workflows/codeql.yml) [![Pylint](https://github.com/arunkv/wordle/actions/workflows/pylint.yml/badge.svg)](https://github.com/arunkv/wordle/actions/workflows/pylint.yml) [![Qodana](https://github.com/arunkv/wordle/actions/workflows/qodana_code_quality.yml/badge.svg)](https://github.com/arunkv/wordle/actions/workflows/qodana_code_quality.yml)
 
 ## License
