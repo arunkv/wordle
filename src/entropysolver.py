@@ -10,9 +10,10 @@ you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 """
 from collections import defaultdict
+from multiprocessing import Pool, cpu_count
 
-from responses import get_response_non_interactive
 from constants import EXACT_MATCH, PARTIAL_MATCH
+from responses import get_response_non_interactive
 from utils import print_best_guesses
 
 
@@ -46,7 +47,8 @@ class EntropySolver:
             None
         """
         self.quiet = quiet
-        self.response_scores = self.compute_response_scores(words)
+        self.all_words = words
+        self.response_scores = self.compute_response_scores()
 
     def guess(self, words):
         """
@@ -63,34 +65,36 @@ class EntropySolver:
         print_best_guesses(self.quiet, word_scores)
         return word_scores[0][0]
 
-    @staticmethod
-    def compute_response_scores(words):
+    def compute_response_scores(self):
         """
-        For each word in words, compare to all other words using the get_response_non_interactive
-        function and compute the percentage of words that are resulting in an 'xxxxx' response.
+        Compute response scores using multiprocessing for each word in the given list of words.
+        """
+        with Pool(cpu_count()) as pool:
+            response_scores = pool.map(self.compute_response_score_for_word, self.all_words)
+        return response_scores
+
+    def compute_response_score_for_word(self, word):
+        """
+        Compute response score for a given word.
 
         Parameters:
-            words (list): A list of words to compare.
+            word (str): The word for which the response score is being computed.
 
         Returns:
-            dict: A dictionary with each word as the key and the percentage of 'xxxxx' responses
-            as the value.
+            tuple: A tuple containing the word and the computed cumulative response score.
         """
-        response_scores = []
-        for word in words:
-            response_freq_map = defaultdict(int)
-            for other_word in words:
-                if word != other_word:
-                    response = get_response_non_interactive(word, other_word)
-                    response_freq_map[response] += 1
+        response_freq_map = defaultdict(int)
+        for other_word in self.all_words:
+            if word != other_word:
+                response = get_response_non_interactive(word, other_word)
+                response_freq_map[response] += 1
 
-            cumulative_response_score = 0
-            for response, freq in response_freq_map.items():
-                response_score = EntropySolver.compute_response_score(response)
-                cumulative_response_score += response_score * freq
+        cumulative_response_score = 0
+        for response, freq in response_freq_map.items():
+            response_score = EntropySolver.compute_response_score(response)
+            cumulative_response_score += response_score * freq
 
-            response_scores.append((word, cumulative_response_score / len(words)))
-        return response_scores
+        return word, cumulative_response_score / len(self.all_words)
 
     @staticmethod
     def compute_response_score(response):
@@ -108,5 +112,5 @@ class EntropySolver:
             if char == EXACT_MATCH:
                 score += 1
             elif char == PARTIAL_MATCH:
-                score += 0.3
+                score += 0.1
         return score
