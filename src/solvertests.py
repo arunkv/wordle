@@ -8,6 +8,7 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
 """
 import unittest
 
+from constants import EXACT_MATCH, NO_MATCH, PARTIAL_MATCH
 from responses import get_response_non_interactive
 
 
@@ -27,13 +28,16 @@ class SolverTestCase(unittest.TestCase):
         """
         A test function to compare the output of get_response_non_interactive with expected values.
         """
-        self.assertEqual('xxoox', get_response_non_interactive('actor', 'slate'))
-        self.assertEqual('ooxxx', get_response_non_interactive('actor', 'taint'))
-        self.assertEqual('==x=o', get_response_non_interactive('arrow', 'ardor'))
-        self.assertEqual('=====', get_response_non_interactive('arrow', 'arrow'))
-        self.assertEqual('xxxxx', get_response_non_interactive('slate', 'quirk'))
-        self.assertEqual('xoxxx', get_response_non_interactive('dully', 'slate'))
+
+        self.assertEqual(''.join([NO_MATCH, NO_MATCH, PARTIAL_MATCH, PARTIAL_MATCH, NO_MATCH]), get_response_non_interactive('actor', 'slate'))
+        self.assertEqual(''.join([PARTIAL_MATCH, PARTIAL_MATCH, NO_MATCH, NO_MATCH, NO_MATCH]), get_response_non_interactive('actor', 'taint'))
+        self.assertEqual(''.join([EXACT_MATCH, EXACT_MATCH, NO_MATCH, EXACT_MATCH, PARTIAL_MATCH]), get_response_non_interactive('arrow', 'ardor'))
+        self.assertEqual(''.join([EXACT_MATCH]*5), get_response_non_interactive('arrow', 'arrow'))
+        self.assertEqual(''.join([NO_MATCH]*5), get_response_non_interactive('slate', 'quirk'))
+        self.assertEqual(''.join([NO_MATCH, PARTIAL_MATCH, NO_MATCH, NO_MATCH, NO_MATCH]), get_response_non_interactive('dully', 'slate'))
 
 
 if __name__ == '__main__':
     unittest.main()
+
+

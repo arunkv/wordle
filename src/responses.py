@@ -46,8 +46,8 @@ def get_response_interactive(length):
     Prompts the user for a response and validates it.
 
     This function repeatedly prompts the user for a response until a valid response is given. A
-    valid response is either 'q', 'i', or a string of 'x', 'o', and '=' characters of the same
-    length as the provided `length` argument.
+    valid response is either 'q', 'i', or a string of EXACT_MATCH, PARTIAL_MATCH, NO_MATCH
+    characters of the same length as the provided `length` argument.
 
     Args:
         length (int): The expected length of the response.
@@ -59,7 +59,8 @@ def get_response_interactive(length):
         response = input(RESPONSE_PROMPT)
         response = response.strip().lower()
         logging.info("Response: %s", response)
-        if (all(char in {'x', 'o', '='} for char in response) and len(response) == length
+        if (all(char in {EXACT_MATCH, PARTIAL_MATCH, NO_MATCH} for char in response)
+                and len(response) == length
                 or response == 'i' or response == 'q'):
             break
         print("Invalid response. Please try again.")
@@ -71,8 +72,8 @@ def get_response_non_interactive(word, guess):
     Returns the response for a given word and guess.
 
     This function calculates the response for a given word and guess by comparing the letters at
-    each position in the word and guess. It returns a string of 'x', 'o', and '=' characters
-    indicating the matches between the word and guess.
+    each position in the word and guess. It returns a string of EXACT_MATCH, PARTIAL_MATCH, and
+    NO_MATCH characters indicating the matches between the word and guess.
 
     Args:
         word (str): The word to compare against.
@@ -95,7 +96,6 @@ def get_response_non_interactive(word, guess):
     potential_partials = []
     for i, guess_letter in enumerate(guess):
         if response[i] == '':
-
             guess_letter_match_count = (
                 len([j for j, letter in enumerate(word)
                      if letter == guess_letter and response[j] != EXACT_MATCH]))
@@ -134,11 +134,11 @@ def display_response(quiet, response):
         print("Response: ", end='')
         for char in response:
             if char == EXACT_MATCH:
-                print('\033[92m\u2589\033[0m', end='')
+                print('🟩️', end='')
             elif char == PARTIAL_MATCH:
-                print('\033[93m\u2589\033[0m', end='')
+                print('🟨', end='')
             else:
-                print('\033[91m\u2589\033[0m', end='')
+                print('⬜️', end='')
         print()
 
 
@@ -147,8 +147,9 @@ def process_response(guess, response, search_space, known_letters, length):
     Processes the user's response to a guess.
 
     This function updates the search space and known letters based on the user's response. It
-    processes '=' responses first, then 'o' responses, and finally 'x' responses. For each type of
-    response, it updates the known letters and the search space accordingly.
+    processes EXACT_MATCH responses first, then PARTIAL_MATCH responses, and finally NO_MATCH
+    responses. For each type of response, it updates the known letters and the search space
+    accordingly.
 
     Args:
         guess (str): The guess that was made.
@@ -162,19 +163,19 @@ def process_response(guess, response, search_space, known_letters, length):
         None
     """
     known_letters.clear()
-    # Process '=' responses first
+    # Process EXACT_MATCH responses first
     for i, response_letter in enumerate(response):
         if response_letter == EXACT_MATCH:
             known_letters.append(guess[i])
             search_space[i] = {guess[i]}
 
-    # Then process 'o' responses
+    # Then process PARTIAL_MATCH responses
     for i, response_letter in enumerate(response):
         if response_letter == PARTIAL_MATCH:
             known_letters.append(guess[i])
             search_space[i].discard(guess[i])
 
-    # Finally, process 'x' responses
+    # Finally, process NO_MATCH responses
     for i, response_letter in enumerate(response):
         if response_letter == NO_MATCH:
             search_space[i].discard(guess[i])

@@ -99,7 +99,8 @@ class EntropySolver:
     @staticmethod
     def compute_response_score(response):
         """
-        Compute the score of a given response based on the occurrences of '=' and 'o' characters.
+        Compute the score of a given response based on the occurrences of EXACT_MATCH and
+        PARTIAL_MATCH characters.
 
         Parameters:
             response (str): The response string to calculate the score from.

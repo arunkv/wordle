@@ -29,9 +29,10 @@ LOG_FILE = 'wordle.log'
 WORDLE_STATS_FILE = 'wordle_stats.json'
 FAILURE_PROMPT = "Please provide the correct word: "
 DEFAULT_NLTK_CORPUSES = ['brown']
-NLTK_CORPUSES = ['brown', 'reuters', 'webtext', 'inaugural', 'nps_chat', 'treebank', 'wordnet']
-NO_MATCH = 'x'
-PARTIAL_MATCH = 'o'
-EXACT_MATCH = '='
+NLTK_CORPUSES = ['brown']
+# NLTK_CORPUSES = ['brown', 'reuters', 'webtext', 'inaugural', 'nps_chat', 'treebank', 'wordnet']
+NO_MATCH = 'b'
+PARTIAL_MATCH = 'y'
+EXACT_MATCH = 'g'
 RESPONSE_PROMPT = (f"Response (q quit, i invalid, {NO_MATCH} no match, {PARTIAL_MATCH} partial "
                    f"match, {EXACT_MATCH} exact match)? ")
