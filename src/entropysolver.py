@@ -10,45 +10,51 @@ you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 """
 from collections import defaultdict
-from multiprocessing import Pool, cpu_count
+from math import log
 
-from constants import EXACT_MATCH, PARTIAL_MATCH
 from responses import get_response_non_interactive
 from utils import print_best_guesses
 
 
 class EntropySolver:
     """
-    EntropySolver is a class that provides methods to solve the Wordle game by lowering entropy.
+    A class used to solve Wordle puzzles using entropy lowering.
 
-    Attributes:
-        quiet (bool): A flag indicating whether to run the function quietly.
-        response_scores (list): A list of tuples, each containing a word and its corresponding
-         bad response percentage.
+    This class provides methods to compute entropy for a list of words and generate the best
+    guess based on the computed entropy scores. The entropy is computed using the formula
+    -i * log(i) for each word in the list, where i is the frequency of the word.
 
-    Methods:
-        __init__(self, quiet, words): Initializes the EntropySolver object with the provided
-        parameters.
-        guess(self, words): Generates the best guess for a list of words based on their entropy
-        scores.
-        compute_bad_response_percentages(words): Computes the percentage of bad responses for each
-        word in the provided list.
+    Attributes
+    ----------
+    quiet : bool
+        A flag indicating whether to run the function quietly.
+
+    Methods
+    -------
+    guess(words: list) -> str:
+        Generate the best guess for a list of words based on their entropy scores.
+
+    compute_entropy(words: list) -> list:
+        Compute entropy scores for each word in the given list of words.
+
+    compute_entropy_for_word(word: str, words: list) -> tuple:
+        Compute entropy for a given word.
     """
 
-    def __init__(self, quiet, words):
+    def __init__(self, quiet, all_words):
         """
         Initialize the object with the provided parameters.
 
         Parameters:
             quiet (bool): A flag indicating whether to run the function quietly.
-            words (list): A list of words to compute bad response percentages.
+            all_words (list): A list of all possible words to be used for entropy computation.
 
         Returns:
             None
         """
         self.quiet = quiet
-        self.all_words = words
-        self.response_scores = self.compute_response_scores()
+        self.all_words = all_words
+        self.all_word_entropy = EntropySolver.compute_entropy(all_words)
 
     def guess(self, words):
         """
@@ -60,58 +66,44 @@ class EntropySolver:
         Returns:
             str: The top guess word with the lowest entropy.
         """
-        word_scores = [item for item in self.response_scores if item[0] in words]
+
+        if set(words) == set(self.all_words):
+            entropy = self.all_word_entropy
+        else:
+            entropy = self.compute_entropy(words)
+        word_scores = [item for item in entropy if item[0] in words]
         word_scores = sorted(word_scores, key=lambda item: item[1], reverse=True)
         print_best_guesses(self.quiet, word_scores)
         return word_scores[0][0]
 
-    def compute_response_scores(self):
+    @staticmethod
+    def compute_entropy(words):
         """
         Compute response scores using multiprocessing for each word in the given list of words.
         """
-        with Pool(cpu_count()) as pool:
-            response_scores = pool.map(self.compute_response_score_for_word, self.all_words)
-        return response_scores
+        entropies = []
+        for word in words:
+            entropies.append(EntropySolver.compute_entropy_for_word(word, words))
+        return entropies
 
-    def compute_response_score_for_word(self, word):
+    @staticmethod
+    def compute_entropy_for_word(word, words):
         """
-        Compute response score for a given word.
+        Compute the entropy for a given word compared to other words in a list.
 
         Parameters:
-            word (str): The word for which the response score is being computed.
+        word (str): The word for which entropy needs to be computed.
+        words (list): A list of words to compare against.
 
         Returns:
-            tuple: A tuple containing the word and the computed cumulative response score.
+        tuple: A tuple containing the word and its computed entropy.
         """
         response_freq_map = defaultdict(int)
-        for other_word in self.all_words:
+        for other_word in words:
             if word != other_word:
                 response = get_response_non_interactive(word, other_word)
                 response_freq_map[response] += 1
 
-        cumulative_response_score = 0
-        for response, freq in response_freq_map.items():
-            response_score = EntropySolver.compute_response_score(response)
-            cumulative_response_score += response_score * freq
-
-        return word, cumulative_response_score / len(self.all_words)
-
-    @staticmethod
-    def compute_response_score(response):
-        """
-        Compute the score of a given response based on the occurrences of EXACT_MATCH and
-        PARTIAL_MATCH characters.
-
-        Parameters:
-            response (str): The response string to calculate the score from.
-
-        Returns:
-            float: The calculated score based on the response string.
-        """
-        score = 0
-        for char in response:
-            if char == EXACT_MATCH:
-                score += 1
-            elif char == PARTIAL_MATCH:
-                score += 0.1
-        return score
+        probabilities = [freq / len(words) for freq in response_freq_map.values()]
+        entropy = sum(-i * log(i) for i in probabilities if i > 0)
+        return word, entropy
