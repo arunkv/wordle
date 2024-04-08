@@ -10,7 +10,6 @@ you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 """
 from collections import Counter
-from functools import lru_cache
 from math import log
 
 from responses import get_response_non_interactive
@@ -78,7 +77,6 @@ class EntropySolver:
         return word_scores[0][0]
 
     @staticmethod
-    @lru_cache(maxsize=None)  # Cache results for unique inputs
     def compute_entropy(words):
         """
         Compute response scores using multiprocessing for each word in the given list of words.
@@ -89,7 +87,6 @@ class EntropySolver:
         return entropies
 
     @staticmethod
-    @lru_cache(maxsize=None)  # Cache results for unique inputs
     def compute_entropy_for_word(word, words):
         """
         Compute the entropy for a given word compared to other words in a list.
