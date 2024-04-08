@@ -1,3 +1,4 @@
+# pylint: skip-file
 """
 This module contains unit tests for the Wordle solver implemented in the `solver.py` module.
 

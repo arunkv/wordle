@@ -9,7 +9,8 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 """
-from collections import defaultdict
+from collections import Counter
+from functools import lru_cache
 from math import log
 
 from responses import get_response_non_interactive
@@ -67,7 +68,7 @@ class EntropySolver:
             str: The top guess word with the lowest entropy.
         """
 
-        if set(words) == set(self.all_words):
+        if words == self.all_words:
             entropy = self.all_word_entropy
         else:
             entropy = self.compute_entropy(words)
@@ -77,6 +78,7 @@ class EntropySolver:
         return word_scores[0][0]
 
     @staticmethod
+    @lru_cache(maxsize=None)  # Cache results for unique inputs
     def compute_entropy(words):
         """
         Compute response scores using multiprocessing for each word in the given list of words.
@@ -87,6 +89,7 @@ class EntropySolver:
         return entropies
 
     @staticmethod
+    @lru_cache(maxsize=None)  # Cache results for unique inputs
     def compute_entropy_for_word(word, words):
         """
         Compute the entropy for a given word compared to other words in a list.
@@ -98,12 +101,8 @@ class EntropySolver:
         Returns:
         tuple: A tuple containing the word and its computed entropy.
         """
-        response_freq_map = defaultdict(int)
-        for other_word in words:
-            if word != other_word:
-                response = get_response_non_interactive(word, other_word)
-                response_freq_map[response] += 1
-
+        responses = [get_response_non_interactive(word, other_word) for other_word in words]
+        response_freq_map = Counter(responses)
         probabilities = [freq / len(words) for freq in response_freq_map.values()]
-        entropy = sum(-i * log(i) for i in probabilities if i > 0)
+        entropy = sum(-i * log(i) for i in probabilities)
         return word, entropy
