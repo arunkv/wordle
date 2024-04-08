@@ -44,3 +44,18 @@ def print_best_guesses(quiet, word_scores):
         quiet_print(quiet, "Best guesses: ")
         for _, (word, score) in enumerate(word_scores[:5]):
             quiet_print(quiet, f"\t- {word}: ({score:.3f})")
+
+
+def chunk_list(lst, num_chunks):
+    """
+    A function to split a list into chunks of size n.
+
+    Parameters:
+    - lst (list): The list to split into chunks.
+    - n (int): The size of each chunk.
+
+    Returns:
+    - list: A list of chunks.
+    """
+    for i in range(0, len(lst), num_chunks):
+        yield lst[i:i + num_chunks]

@@ -11,9 +11,10 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
 """
 from collections import Counter
 from math import log
+from multiprocessing import Manager, Process, cpu_count
 
 from responses import get_response_non_interactive
-from utils import print_best_guesses
+from utils import chunk_list, print_best_guesses
 
 
 class EntropySolver:
@@ -81,10 +82,37 @@ class EntropySolver:
         """
         Compute response scores using multiprocessing for each word in the given list of words.
         """
-        entropies = []
-        for word in words:
+        if len(words) < 1000:
+            entropies = []
+            for word in words:
+                entropies.append(EntropySolver.compute_entropy_for_word(word, words))
+            return entropies
+        with Manager() as manager:
+            entropies = manager.list()
+            num_cpus = cpu_count()
+            chunk_size = len(words) // num_cpus if len(words) % num_cpus == 0 else len(
+                words) // num_cpus + 1
+            processes = []
+            for chunk in chunk_list(words, chunk_size):
+                process = Process(target=EntropySolver.compute_entropy_for_chunk,
+                                  args=(chunk, words, entropies))
+                process.start()
+                processes.append(process)
+            for process in processes:
+                process.join()
+            return list(entropies)
+
+    @staticmethod
+    def compute_entropy_for_chunk(chunk, words, entropies):
+        """
+        Compute entropy for a chunk of words and update the entropies list.
+
+        :param chunk: List of words to compute entropy for
+        :param words: List of all words to use for entropy calculation
+        :param entropies: List to store the computed entropies
+        """
+        for word in chunk:
             entropies.append(EntropySolver.compute_entropy_for_word(word, words))
-        return entropies
 
     @staticmethod
     def compute_entropy_for_word(word, words):
