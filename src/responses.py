@@ -17,6 +17,7 @@ you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 """
 import logging
+from functools import lru_cache
 
 from constants import EXACT_MATCH, NO_MATCH, PARTIAL_MATCH, RESPONSE_PROMPT
 
@@ -67,6 +68,7 @@ def get_response_interactive(length):
     return response
 
 
+@lru_cache(maxsize=128)
 def get_response_non_interactive(word, guess):
     """
     Returns the response for a given word and guess.

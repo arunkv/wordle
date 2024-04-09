@@ -10,6 +10,7 @@ you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 """
 from collections import Counter
+from functools import reduce
 from math import log
 from multiprocessing import Manager, Process, cpu_count
 
@@ -82,7 +83,7 @@ class EntropySolver:
         """
         Compute response scores using multiprocessing for each word in the given list of words.
         """
-        if len(words) < 1000:
+        if len(words) < 800:
             entropies = []
             for word in words:
                 entropies.append(EntropySolver.compute_entropy_for_word(word, words))
@@ -129,5 +130,5 @@ class EntropySolver:
         responses = [get_response_non_interactive(word, other_word) for other_word in words]
         response_freq_map = Counter(responses)
         probabilities = [freq / len(words) for freq in response_freq_map.values()]
-        entropy = sum(-i * log(i) for i in probabilities)
+        entropy = reduce(lambda x, y: x - y * log(y), probabilities, 0)
         return word, entropy

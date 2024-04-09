@@ -68,9 +68,8 @@ This solver uses the probability of letters in each position to determine the be
 
 | Word List         | Words | Success Rate | Average Tries | Average Time Per Word (ms) |
 |-------------------|-------|--------------|---------------|----------------------------|
-| Wordle (original) | 2309  | 99.0%        | 3.76          | 3                          |
-| ENABLE 2K         | 8672  | 87.4%        | 4.41          | 13                         |
-| NYTimes Extended  | 14855 | 83.2%        | 4.57          | 22                         |
+| Wordle (original) | 2315  | 99.0%        | 3.78          | 5                          |
+| NYTimes Extended  | 14855 | 83.2%        | 4.57          | 21                         |
 
 ### Word Probability
 
@@ -79,7 +78,6 @@ This solver uses the probability of words in well known NLTK corpuses to determi
 | Word List         | Words | Success Rate | Average Tries | Average Time Per Word (ms) |
 |-------------------|-------|--------------|---------------|----------------------------|
 | Wordle (original) | 2309  | 98.1%        | 4.19          | 5                          |
-| ENABLE 2K         | 8672  | 88.5%        | 4.66          | 15                         |
 | NYTimes Extended  | 14855 | 83.2%        | 4.81          | 25                         |
 
 ### Entropy Lowering
@@ -90,7 +88,7 @@ score is more time-consuming than the position probability solver.
 
 | Word List         | Words | Success Rate | Average Tries | Average Time Per Word (ms) |
 |-------------------|-------|--------------|---------------|----------------------------|
-| Wordle (original) | 2315  | 99.6%        | 3.57          | 42                         |
+| Wordle (original) | 2315  | 99.6%        | 3.57          | 44                         |
 
 _Timing from 2020 M1 MacBook Pro (8 cores)_
 
