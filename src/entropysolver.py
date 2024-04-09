@@ -56,7 +56,7 @@ class EntropySolver:
         """
         self.quiet = quiet
         self.all_words = all_words
-        self.all_word_entropy = EntropySolver.compute_entropy(all_words)
+        self.all_word_entropy = EntropySolver.compute_entropy(all_words, True)
 
     def guess(self, words):
         """
@@ -72,18 +72,25 @@ class EntropySolver:
         if words == self.all_words:
             entropy = self.all_word_entropy
         else:
-            entropy = self.compute_entropy(words)
+            entropy = self.compute_entropy(words, False)
         word_scores = [item for item in entropy if item[0] in words]
         word_scores = sorted(word_scores, key=lambda item: item[1], reverse=True)
         print_best_guesses(self.quiet, word_scores)
         return word_scores[0][0]
 
     @staticmethod
-    def compute_entropy(words):
+    def compute_entropy(words, parallel=False):
         """
-        Compute response scores using multiprocessing for each word in the given list of words.
+        Compute the entropy of a list of words.
+
+        Parameters:
+            words (list): A list of words for which to compute entropy.
+            parallel (bool): Flag indicating whether to compute entropy in parallel.
+
+        Returns:
+            list: A list of entropy values for each word in the input list.
         """
-        if len(words) < 800:
+        if not parallel or len(words) < 800:
             entropies = []
             for word in words:
                 entropies.append(EntropySolver.compute_entropy_for_word(word, words))
