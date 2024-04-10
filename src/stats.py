@@ -23,7 +23,7 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
 
 import json
 
-from constants import WORDLE_STATS_FILE, FAILURE_PROMPT
+from constants import FAILURE_PROMPT, WORDLE_STATS_FILE
 from utils import quiet_print
 
 
@@ -134,6 +134,6 @@ def display_stats(stats):
     print(f"Games Solved: {stats.get('solved', 0)}")
     print(f"Average Tries: {stats.get('average_tries', 0):.2f}")
     if stats.get('played', 0) > 0:
-        print(f"Success Rate: {stats['solved'] / stats['played'] * 100:.1f} %")
+        print(f"Success Rate: {stats.get('solved', 0) / stats['played'] * 100:.1f} %")
         if stats['solve_time']:
             print(f"Solve Time Per Game: {stats['solve_time'] / stats['played'] * 1000:.0f} ms")
