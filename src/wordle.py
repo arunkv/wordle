@@ -80,15 +80,15 @@ def parse_arguments():
 
 if __name__ == '__main__':
     try:
-        args = parse_arguments()
-        profiler = None
-        if args.profile:
-            profiler = cProfile.Profile()
-            profiler.enable()
+        program_args = parse_arguments()
+        PROFILER = None
+        if program_args.profile:
+            PROFILER = cProfile.Profile()
+            PROFILER.enable()
         solve(parse_arguments())
-        if args.profile:
-            profiler.disable()
-            profiler.print_stats(sort='cumtime')
+        if program_args.profile:
+            PROFILER.disable()
+            PROFILER.print_stats(sort='cumtime')
     except KeyboardInterrupt:
         logging.info("Game interrupted by user")
         print()
