@@ -71,11 +71,9 @@ class EntropySolver:
         """
 
         if words == self.all_words:
-            entropy = self.all_word_entropy
+            word_scores = self.all_word_entropy
         else:
-            entropy = self.compute_entropy(words, False)
-        word_scores = [item for item in entropy if item[0] in words]
-        word_scores = sorted(word_scores, key=lambda item: item[1], reverse=True)
+            word_scores = self.compute_entropy(words, False)
         print_best_guesses(self.quiet, word_scores)
         return word_scores[0][0]
 
@@ -95,6 +93,7 @@ class EntropySolver:
             entropies = []
             for word in words:
                 entropies.append(EntropySolver.compute_entropy_for_word(word, words))
+            entropies = sorted(entropies, key=lambda item: item[1], reverse=True)
             return entropies
         with Manager() as manager:
             entropies = manager.list()
@@ -107,7 +106,8 @@ class EntropySolver:
                 processes.append(process)
             for process in processes:
                 process.join()
-            return list(entropies)
+            entropies = sorted(list(entropies), key=lambda item: item[1], reverse=True)
+            return entropies
 
     @staticmethod
     def compute_entropy_for_chunk(chunk, words, entropies):
