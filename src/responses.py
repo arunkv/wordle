@@ -85,39 +85,24 @@ def get_response_non_interactive(word, guess):
         str: The response string.
     """
     word_len = len(word)
-    letters_left = word_len
-    response = [''] * word_len
+    response = [NO_MATCH] * word_len
+    counted_pos = set()
 
     # Process exact matches first
     for i, guess_letter in enumerate(guess):
         if word[i] == guess_letter:
             response[i] = EXACT_MATCH
-            letters_left -= 1
+            counted_pos.add(i)
 
     # Process partial matches
-    potential_partials = []
     for i, guess_letter in enumerate(guess):
-        if response[i] == '':
-            guess_letter_match_count = (
-                len([j for j, letter in enumerate(word)
-                     if letter == guess_letter and response[j] != EXACT_MATCH]))
-            if guess_letter_match_count > 0:
-                potential_partials.append((i, guess_letter, guess_letter_match_count))
-            else:
-                response[i] = NO_MATCH
-                letters_left -= 1
-    potential_partial_index = 0
-    while letters_left > 0:
-        i, guess_letter, guess_letter_match_count = potential_partials[potential_partial_index]
-        if guess_letter_match_count > 0:
-            response[i] = PARTIAL_MATCH
-            for j, match in enumerate(potential_partials):
-                if match[0] != i and match[1] == guess_letter:
-                    potential_partials[j] = (match[0], match[1], match[2] - 1)
-        else:
-            response[i] = NO_MATCH
-        letters_left -= 1
-        potential_partial_index += 1
+        if guess_letter in word and response[i] != EXACT_MATCH:
+            positions = [i for i, letter in enumerate(word) if letter == guess_letter]
+            for pos in positions:
+                if pos not in counted_pos:
+                    response[i] = PARTIAL_MATCH
+                    counted_pos.add(pos)
+                    break
     return ''.join(response)
 
 
