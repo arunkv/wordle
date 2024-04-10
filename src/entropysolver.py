@@ -9,6 +9,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 """
+import math
 from collections import Counter
 from functools import reduce
 from math import log
@@ -97,9 +98,7 @@ class EntropySolver:
             return entropies
         with Manager() as manager:
             entropies = manager.list()
-            num_cpus = cpu_count()
-            chunk_size = len(words) // num_cpus if len(words) % num_cpus == 0 else len(
-                words) // num_cpus + 1
+            chunk_size = math.ceil(len(words) / cpu_count())
             processes = []
             for chunk in chunk_list(words, chunk_size):
                 process = Process(target=EntropySolver.compute_entropy_for_chunk,
