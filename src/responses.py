@@ -84,8 +84,7 @@ def get_response_non_interactive(word, guess):
     Returns:
         str: The response string.
     """
-    word_len = len(word)
-    response = [NO_MATCH] * word_len
+    response = [NO_MATCH] * len(word)
     counted_pos = set()
 
     # Process exact matches first

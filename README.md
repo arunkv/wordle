@@ -28,6 +28,7 @@ NYTimes Wordle game: https://www.nytimes.com/games/wordle/index.html
   -c, --continuous                           Continuous mode; uses all words in the dictionary
   -s, --solver                               Solver to use (default: position)
   -q, --quiet                                Quiet mode
+  -p, --profile                              Profile the code (for debugging)
 ```
 
 ## Example
@@ -68,7 +69,7 @@ This solver uses the probability of letters in each position to determine the be
 
 | Word List         | Words | Success Rate | Average Tries | Average Time Per Word (ms) |
 |-------------------|-------|--------------|---------------|----------------------------|
-| Wordle (original) | 2315  | 99.0%        | 3.78          | 5                          |
+| Wordle (original) | 2315  | 99.0%        | 3.78          | 3                          |
 | NYTimes Extended  | 14855 | 83.2%        | 4.57          | 21                         |
 
 ### Word Probability
@@ -77,7 +78,7 @@ This solver uses the probability of words in well known NLTK corpuses to determi
 
 | Word List         | Words | Success Rate | Average Tries | Average Time Per Word (ms) |
 |-------------------|-------|--------------|---------------|----------------------------|
-| Wordle (original) | 2309  | 98.1%        | 4.19          | 5                          |
+| Wordle (original) | 2315  | 98.1%        | 4.19          | 4                          |
 | NYTimes Extended  | 14855 | 83.2%        | 4.81          | 25                         |
 
 ### Entropy Lowering
@@ -88,7 +89,7 @@ score is more time-consuming than the position probability solver.
 
 | Word List         | Words | Success Rate | Average Tries | Average Time Per Word (ms) |
 |-------------------|-------|--------------|---------------|----------------------------|
-| Wordle (original) | 2315  | 99.6%        | 3.57          | 44                         |
+| Wordle (original) | 2315  | 99.6%        | 3.57          | 37                         |
 
 _Timing from 2020 M1 MacBook Pro (8 cores)_
 

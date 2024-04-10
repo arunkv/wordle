@@ -23,6 +23,7 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
 """
 
 import argparse
+import cProfile
 import logging
 
 import constants
@@ -63,6 +64,7 @@ def parse_arguments():
                         choices=['position', 'word', 'entropy'],
                         help='Solver to use (default: position)')
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
+    parser.add_argument('-p', '--profile', action='store_true', help='Profile the code')
     args = parser.parse_args()
     if args.non_interactive:
         if not (args.word or args.continuous):
@@ -78,7 +80,15 @@ def parse_arguments():
 
 if __name__ == '__main__':
     try:
+        args = parse_arguments()
+        profiler = None
+        if args.profile:
+            profiler = cProfile.Profile()
+            profiler.enable()
         solve(parse_arguments())
+        if args.profile:
+            profiler.disable()
+            profiler.print_stats(sort='cumtime')
     except KeyboardInterrupt:
         logging.info("Game interrupted by user")
         print()
