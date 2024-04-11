@@ -36,6 +36,10 @@ class SolverTestCase(unittest.TestCase):
         self.assertEqual(''.join([EXACT_MATCH]*5), get_response_non_interactive('arrow', 'arrow'))
         self.assertEqual(''.join([NO_MATCH]*5), get_response_non_interactive('slate', 'quirk'))
         self.assertEqual(''.join([NO_MATCH, PARTIAL_MATCH, NO_MATCH, NO_MATCH, NO_MATCH]), get_response_non_interactive('dully', 'slate'))
+        self.assertEqual(''.join([NO_MATCH, NO_MATCH, PARTIAL_MATCH, NO_MATCH, PARTIAL_MATCH]), get_response_non_interactive('abide', 'speed'))
+        self.assertEqual(''.join([PARTIAL_MATCH, NO_MATCH, PARTIAL_MATCH, PARTIAL_MATCH, NO_MATCH]), get_response_non_interactive('erase', 'speed'))
+        self.assertEqual(''.join([EXACT_MATCH, NO_MATCH, EXACT_MATCH, NO_MATCH, NO_MATCH]), get_response_non_interactive('steal', 'speed'))
+        self.assertEqual(''.join([NO_MATCH, PARTIAL_MATCH, EXACT_MATCH, PARTIAL_MATCH, NO_MATCH]), get_response_non_interactive('crepe', 'speed'))
 
 
 if __name__ == '__main__':
