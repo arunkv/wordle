@@ -90,6 +90,8 @@ score is more time-consuming than the position probability solver.
 | Word List         | Words | Success Rate | Average Tries | Average Time Per Word (ms) |
 |-------------------|-------|--------------|---------------|----------------------------|
 | Wordle (original) | 2315  | 99.6%        | 3.57          | 16                         |
+| NYTimes Extended  | 14855 | 90.5%        | 4.29          | 254                        |
+
 
 _Timing from 2020 M1 MacBook Pro (8 cores)_
 
