@@ -52,31 +52,25 @@ def trim_word_list_by_search_space(word_list, search_space, known_letters):
     Returns:
         list: The trimmed word list.
     """
+    known_letters_counter = Counter(known_letters)
+
+    def are_known_letters_in_word_optimized(word):
+        """
+        Checks if all letters in `known_letters` list, including duplicates, are present in a word.
+
+        Args:
+            word (str): The word in which to check for the presence of the known letters.
+
+        Returns:
+            bool: True if all letters in `known_letters` (including duplicates) are present in word
+                  False otherwise.
+        """
+        word_counter = Counter(word)
+        return all(word_counter[letter] >= count for letter, count in known_letters_counter.items())
+
     return [word for word in word_list
             if all(word[i] in letters for i, letters in enumerate(search_space))
-            and are_known_letters_in_word(word, known_letters)]
-
-
-def are_known_letters_in_word(word, known_letters):
-    """
-    Checks if all letters in the `known_letters` list, including duplicates, are present in a word.
-
-    This function uses a Counter object from the `collections` module in Python to count the
-    occurrences of each letter in the word and in the `known_letters` list. It then checks if for
-    every letter in `known_letters`, the count in the word is greater than or equal to the count
-    in `known_letters`.
-
-    Args:
-        word (str): The word in which to check for the presence of the known letters.
-        known_letters (list): A list of known letters to check for in the word.
-
-    Returns:
-        bool: True if all letters in `known_letters` (including duplicates) are present in `word`,
-              False otherwise.
-    """
-    word_counter = Counter(word)
-    known_letters_counter = Counter(known_letters)
-    return all(word_counter[letter] >= count for letter, count in known_letters_counter.items())
+            and are_known_letters_in_word_optimized(word)]
 
 
 def solve(args):
@@ -95,8 +89,8 @@ def solve(args):
         None
     """
     start_time = time.time()
-    all_words = sorted([word for word in get_word_list(args.dict)
-                        if len(word) == args.len and not word[0].isupper()])
+    all_words = sorted([word for word in get_word_list(args.dict) if
+                        len(word) == args.len and not word[0].isupper()])
     logging.info("Word list loaded with %s words", len(all_words))
     if args.solver == 'position':
         solver = PositionProbabilitySolver(args.quiet, all_words)
