@@ -15,7 +15,7 @@ Wordle is solved or the maximum number of tries is reached.
 This module is meant to be imported and used by the `wordle.py` script. It does not provide any
 command-line interface of its own.
 
-Copyright 2024 Arun K Viswanathan
+Copyright 2024-2025 Arun K Viswanathan
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0

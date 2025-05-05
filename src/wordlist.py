@@ -14,7 +14,7 @@ the corpus and then retrieves the word list.
 This module is part of a Wordle solver game and is used to provide the list of words that the
 game can use.
 
-Copyright 2024 Arun K Viswanathan
+Copyright 2024-2025 Arun K Viswanathan
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0

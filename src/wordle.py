@@ -16,7 +16,7 @@ The command-line arguments are:
 This module is meant to be run as a script. It does not provide any functions or classes that can
 be imported into other modules.
 
-Copyright 2024 Arun K Viswanathan
+Copyright 2024-2025 Arun K Viswanathan
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0

@@ -10,12 +10,12 @@ This module defines several constants used throughout the Wordle solver applicat
 
 These constants can be imported into other modules as needed.
 
-Copyright 2024 Arun K Viswanathan
+Copyright 2024-2025 Arun K Viswanathan
 Licensed under the Apache License, Version 2.0
 """
 # Constants
 
-#    Copyright 2024 Arun K Viswanathan
+#    Copyright 2024-2025 Arun K Viswanathan
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
