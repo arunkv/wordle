@@ -17,9 +17,10 @@ you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 """
 import logging
+import string
 from functools import lru_cache
 
-from constants import EXACT_MATCH, NO_MATCH, PARTIAL_MATCH, RESPONSE_PROMPT
+from constants import EXACT_MATCH, NO_MATCH, PARTIAL_MATCH, RESPONSE_PROMPT, CHOOSE_GUESS, CHOOSE_GUESS_PROMPT
 
 
 def get_response(is_non_interactive, word, guess, length):
@@ -62,10 +63,34 @@ def get_response_interactive(length):
         logging.info("Response: %s", response)
         if (all(char in {EXACT_MATCH, PARTIAL_MATCH, NO_MATCH} for char in response)
                 and len(response) == length
-                or response == 'i' or response == 'q'):
+                or response == 'i' or response == 'q' or response == CHOOSE_GUESS):
             break
         print("Invalid response. Please try again.")
     return response
+
+
+def get_new_guess_interactive(length):
+    """
+    Prompts the user for a new guess and validates it.
+
+    This function repeatedly prompts the user for a new guess until a valid guess is given. A
+    valid guess is a string of lowercase letters of the same length as the provided `length`
+    argument.
+
+    Args:
+        length (int): The expected length of the guess.
+
+    Returns:
+        str: The user's new guess.
+    """
+    while True:
+        new_guess = input(CHOOSE_GUESS_PROMPT)
+        new_guess = new_guess.strip().lower()
+        logging.info("New guess entered: %s", new_guess)
+        if len(new_guess) == length and all(char in string.ascii_lowercase for char in new_guess):
+            break
+        print("Invalid guess. Please try again.")
+    return new_guess
 
 
 @lru_cache(maxsize=128)

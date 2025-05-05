@@ -34,5 +34,7 @@ NLTK_CORPUSES = ['brown']
 NO_MATCH = 'b'
 PARTIAL_MATCH = 'y'
 EXACT_MATCH = 'g'
+CHOOSE_GUESS = 'c'
 RESPONSE_PROMPT = (f"Response (q quit, i invalid, {NO_MATCH} no match, {PARTIAL_MATCH} partial "
-                   f"match, {EXACT_MATCH} exact match)? ")
+                   f"match, {EXACT_MATCH} exact match, {CHOOSE_GUESS} choose guess)? ")
+CHOOSE_GUESS_PROMPT = "Enter guess to continue with: "

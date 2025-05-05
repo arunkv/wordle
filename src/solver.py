@@ -26,10 +26,10 @@ import string
 import time
 from collections import Counter
 
-from constants import EXACT_MATCH, NLTK_CORPUSES
+from constants import EXACT_MATCH, NLTK_CORPUSES, CHOOSE_GUESS
 from entropysolver import EntropySolver
 from positionprobabilitysolver import PositionProbabilitySolver
-from responses import display_response, get_response, process_response
+from responses import display_response, get_response, process_response, get_new_guess_interactive
 from stats import display_stats, finalize_stats, load_stats, save_stats
 from utils import quiet_print
 from wordlist import get_word_list
@@ -148,12 +148,20 @@ def solver_worker(all_words, word, args, solver, stats):
 
         # Generate a guess
         guess = solver.guess(words)
-        words.remove(guess)
         quiet_print(args.quiet, f"Guess: {guess}")
         tries += 1
 
         # Get the response
-        response = get_response(args.non_interactive, word, guess, args.len)
+        response = None
+        while True:
+            response = get_response(args.non_interactive, word, guess, args.len)
+            if response == CHOOSE_GUESS:
+                # Get the guess to continue with
+                guess = get_new_guess_interactive(args.len)
+                quiet_print(args.quiet, f"Guess changed to: {guess}")
+            else:
+                break
+        words.remove(guess)
         display_response(args.quiet, response)
 
         # Process the response
