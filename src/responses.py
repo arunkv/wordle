@@ -20,7 +20,8 @@ import logging
 import string
 from functools import lru_cache
 
-from constants import EXACT_MATCH, NO_MATCH, PARTIAL_MATCH, RESPONSE_PROMPT, CHOOSE_GUESS, CHOOSE_GUESS_PROMPT
+from constants import (EXACT_MATCH, NO_MATCH, PARTIAL_MATCH, RESPONSE_PROMPT, CHOOSE_GUESS,
+                       CHOOSE_GUESS_PROMPT)
 
 
 def get_response(is_non_interactive, word, guess, length):
