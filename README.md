@@ -36,29 +36,53 @@ NYTimes Wordle game: https://www.nytimes.com/games/wordle/index.html
 ![Example Wordle game](./wordlegame.png)
 
 ```
-❯ src/wordle.py -d words/word-unscrambler-words.txt -n -w sorry -s entropy
+❯ src/wordle.py -d words/wordle-nyt-words-14855.txt -n -w sorry -s entropy
 Round: 1
-Current possible answers: 2309
+Current possible answers: 14855
 Best guesses:
-        - slate: (0.62)
-        - sauce: (0.61)
-        - slice: (0.61)
-        - shale: (0.61)
-        - saute: (0.60)
-Guess: slate
-Response: █████
+        - tares: (4.305)
+        - lares: (4.270)
+        - rales: (4.256)
+        - teras: (4.254)
+        - ranes: (4.250)
+Guess: tares
+Response: ⬜️⬜️🟩️⬜️🟨
 
 Round: 2
-Current possible answers: 56
+Current possible answers: 39
 Best guesses:
-        - sorry: (0.57)
-        - shiny: (0.57)
-        - spiny: (0.54)
-        - sunny: (0.53)
-        - spicy: (0.52)
+        - scrog: (2.514)
+        - gorsy: (2.464)
+        - siroc: (2.428)
+        - sprog: (2.421)
+        - sirup: (2.412)
+Guess: scrog
+Response: 🟩️⬜️🟩️🟨⬜️
+
+Round: 3
+Current possible answers: 4
+Best guesses:
+        - sorbo: (1.386)
+        - sorbi: (1.040)
+        - sordo: (1.040)
+        - sorry: (0.562)
+Guess: sorbo
+Response: 🟩️🟩️🟩️⬜️⬜️
+
+Round: 4
+Current possible answers: 1
+Best guesses:
+        - sorry: (0.000)
 Guess: sorry
-Response: █████
-Wordle solved in 2 tries
+Response: 🟩️🟩️🟩️🟩️🟩️
+Wordle solved in 4 tries
+Wordle Game Statistics
+----------------------
+Games Played: 2
+Games Solved: 2
+Average Tries: 4.00
+Success Rate: 100.0 %
+Solve Time Per Game: 9226 ms
 ```
 
 ## Statistics
