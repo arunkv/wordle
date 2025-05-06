@@ -98,7 +98,7 @@ This solver uses the probability of letters in each position to determine the be
 
 ### Word Probability
 
-This solver uses the probability of words in well known NLTK corpuses to determine the best possible guess.
+This solver uses the probability of words in well known NLTK corpora to determine the best possible guess.
 
 | Word List         | Words | Success Rate | Average Tries | Average Time Per Word (ms) |
 |-------------------|-------|--------------|---------------|----------------------------|
