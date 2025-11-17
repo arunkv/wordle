@@ -1,5 +1,5 @@
 [project]
-name = "e77_hello_world"
+name = "e77-wordle"
 version = "0.0.1"
 description = "The official Python library for the e77-hello-world API"
 dynamic = ["readme"]

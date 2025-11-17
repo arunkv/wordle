@@ -1,7 +1,7 @@
 # E77 Hello World Python API library
 
 <!-- prettier-ignore -->
-[![PyPI version](https://img.shields.io/pypi/v/e77_hello_world.svg?label=pypi%20(stable))](https://pypi.org/project/e77_hello_world/)
+[![PyPI version](https://img.shields.io/pypi/v/e77-wordle.svg?label=pypi%20(stable))](https://pypi.org/project/e77-wordle/)
 
 The E77 Hello World Python library provides convenient access to the E77 Hello World REST API from any Python 3.9+
 application. The library includes type definitions for all request params and response fields,
@@ -16,12 +16,9 @@ The full API of this library can be found in [api.md](api.md).
 ## Installation
 
 ```sh
-# install from the production repo
-pip install git+ssh://git@github.com/arunkv/wordle.git
+# install from PyPI
+pip install e77-wordle
 ```
-
-> [!NOTE]
-> Once this package is [published to PyPI](https://www.stainless.com/docs/guides/publish), this will become: `pip install e77_hello_world`
 
 ## Usage
 
@@ -81,8 +78,8 @@ By default, the async client uses `httpx` for HTTP requests. However, for improv
 You can enable this by installing `aiohttp`:
 
 ```sh
-# install from the production repo
-pip install 'e77_hello_world[aiohttp] @ git+ssh://git@github.com/arunkv/wordle.git'
+# install from PyPI
+pip install e77-wordle[aiohttp]
 ```
 
 Then you can enable it by instantiating the client with `http_client=DefaultAioHttpClient()`:
