@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from typing import Iterable
 from typing_extensions import Literal
 
@@ -23,8 +24,10 @@ from .._types import (
     Headers,
     NoneType,
     NotGiven,
+    BinaryTypes,
     FileContent,
     SequenceNotStr,
+    AsyncBinaryTypes,
     omit,
     not_given,
 )
@@ -354,7 +357,7 @@ class PetResource(SyncAPIResource):
     def upload_image(
         self,
         pet_id: int,
-        body: FileContent,
+        body: FileContent | BinaryTypes,
         *,
         additional_metadata: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -381,7 +384,7 @@ class PetResource(SyncAPIResource):
         extra_headers = {"Content-Type": "application/octet-stream", **(extra_headers or {})}
         return self._post(
             f"/pet/{pet_id}/uploadImage",
-            body=read_file_content(body),
+            content=read_file_content(body) if isinstance(body, os.PathLike) else body,
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
@@ -703,7 +706,7 @@ class AsyncPetResource(AsyncAPIResource):
     async def upload_image(
         self,
         pet_id: int,
-        body: FileContent,
+        body: FileContent | AsyncBinaryTypes,
         *,
         additional_metadata: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -730,7 +733,7 @@ class AsyncPetResource(AsyncAPIResource):
         extra_headers = {"Content-Type": "application/octet-stream", **(extra_headers or {})}
         return await self._post(
             f"/pet/{pet_id}/uploadImage",
-            body=await async_read_file_content(body),
+            content=await async_read_file_content(body) if isinstance(body, os.PathLike) else body,
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
