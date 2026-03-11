@@ -15,6 +15,7 @@ from functools import reduce
 from math import log
 from multiprocessing import Manager, Process, cpu_count
 
+from constants import PARALLEL_THRESHOLD
 from responses import get_response_non_interactive
 from utils import chunk_list, print_best_guesses
 
@@ -89,7 +90,7 @@ class EntropySolver:
         Returns:
             list: A list of entropy values for each word in the input list.
         """
-        if not parallel or len(words) < 800:
+        if not parallel or len(words) < PARALLEL_THRESHOLD:
             entropies = []
             for word in words:
                 entropies.append(EntropySolver.compute_entropy_for_word(word, words))

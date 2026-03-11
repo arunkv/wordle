@@ -135,5 +135,5 @@ def display_stats(stats):
     print(f"Average Tries: {stats.get('average_tries', 0):.2f}")
     if stats.get('played', 0) > 0:
         print(f"Success Rate: {stats.get('solved', 0) / stats['played'] * 100:.1f} %")
-        if stats['solve_time']:
+        if stats.get('solve_time'):
             print(f"Solve Time Per Game: {stats['solve_time'] / stats['played'] * 1000:.0f} ms")
