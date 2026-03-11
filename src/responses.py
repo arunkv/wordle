@@ -21,7 +21,7 @@ import string
 from functools import lru_cache
 
 from constants import (EXACT_MATCH, NO_MATCH, PARTIAL_MATCH, RESPONSE_PROMPT, CHOOSE_GUESS,
-                       CHOOSE_GUESS_PROMPT)
+                       CHOOSE_GUESS_PROMPT, QUIT_CODE, INVALID_GUESS_CODE)
 
 
 def get_response(is_non_interactive, word, guess, length):
@@ -64,7 +64,8 @@ def get_response_interactive(length):
         logging.info("Response: %s", response)
         if (all(char in {EXACT_MATCH, PARTIAL_MATCH, NO_MATCH} for char in response)
                 and len(response) == length
-                or response == 'i' or response == 'q' or response == CHOOSE_GUESS):
+                or response == INVALID_GUESS_CODE or response == QUIT_CODE
+                or response == CHOOSE_GUESS):
             break
         print("Invalid response. Please try again.")
     return response
@@ -94,7 +95,7 @@ def get_new_guess_interactive(length):
     return new_guess
 
 
-@lru_cache(maxsize=128)
+@lru_cache(maxsize=None)
 def get_response_non_interactive(word, guess):
     """
     Returns the response for a given word and guess.

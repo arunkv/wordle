@@ -26,7 +26,7 @@ import string
 import time
 from collections import Counter
 
-from constants import EXACT_MATCH, NLTK_CORPUSES, CHOOSE_GUESS
+from constants import EXACT_MATCH, NLTK_CORPUSES, CHOOSE_GUESS, QUIT_CODE, INVALID_GUESS_CODE
 from entropysolver import EntropySolver
 from positionprobabilitysolver import PositionProbabilitySolver
 from responses import display_response, get_response, process_response, get_new_guess_interactive
@@ -161,14 +161,15 @@ def solver_worker(all_words, word, args, solver, stats):
                 quiet_print(args.quiet, f"Guess changed to: {guess}")
             else:
                 break
-        words.remove(guess)
+        if guess in words:
+            words.remove(guess)
         display_response(args.quiet, response)
 
         # Process the response
-        if response == 'q':  # Exit
+        if response == QUIT_CODE:  # Exit
             quiet_print(args.quiet, "Aborting!")
             break
-        if response == 'i':  # Try another word since Wordle didn't accept this word
+        if response == INVALID_GUESS_CODE:  # Try another word since Wordle didn't accept this word
             tries -= 1
             continue
         if response == EXACT_MATCH * args.len:  # Wordle solved

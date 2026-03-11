@@ -35,6 +35,9 @@ NO_MATCH = 'b'
 PARTIAL_MATCH = 'y'
 EXACT_MATCH = 'g'
 CHOOSE_GUESS = 'c'
+QUIT_CODE = 'q'
+INVALID_GUESS_CODE = 'i'
+PARALLEL_THRESHOLD = 800  # Minimum word count to switch to parallel entropy computation
 RESPONSE_PROMPT = (f"Response (q quit, i invalid, {NO_MATCH} no match, {PARTIAL_MATCH} partial "
                    f"match, {EXACT_MATCH} exact match, {CHOOSE_GUESS} choose guess)? ")
 CHOOSE_GUESS_PROMPT = "Enter guess to continue with: "

@@ -85,7 +85,7 @@ if __name__ == '__main__':
         if program_args.profile:
             PROFILER = cProfile.Profile()
             PROFILER.enable()
-        solve(parse_arguments())
+        solve(program_args)
         if program_args.profile:
             PROFILER.disable()
             PROFILER.print_stats(sort='cumtime')
