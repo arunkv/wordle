@@ -22,6 +22,9 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
 """
 
 import json
+import logging
+import os
+import tempfile
 
 from constants import FAILURE_PROMPT, WORDLE_STATS_FILE
 from utils import quiet_print
@@ -58,8 +61,19 @@ def save_stats(stats):
     Returns:
         None
     """
-    with open(WORDLE_STATS_FILE, 'w', encoding='utf-8') as stats_file:
-        json.dump(stats, stats_file, indent=4)
+    stats_path = os.path.abspath(WORDLE_STATS_FILE)
+    dir_name = os.path.dirname(stats_path)
+    tmp_path = None
+    try:
+        with tempfile.NamedTemporaryFile('w', dir=dir_name, delete=False,
+                                         suffix='.tmp', encoding='utf-8') as tmp_file:
+            json.dump(stats, tmp_file, indent=4)
+            tmp_path = tmp_file.name
+        os.replace(tmp_path, stats_path)
+    except OSError as e:
+        logging.error("Failed to save stats: %s", e)
+        if tmp_path and os.path.exists(tmp_path):
+            os.unlink(tmp_path)
 
 
 def update_solved_stats(stats, solution, tries):

@@ -9,6 +9,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 """
+import logging
 import math
 from collections import Counter
 from functools import reduce
@@ -106,7 +107,13 @@ class EntropySolver:
                 process.start()
                 processes.append(process)
             for process in processes:
-                process.join()
+                process.join(timeout=300)
+                if process.is_alive():
+                    logging.warning("Entropy process %s timed out, terminating", process.pid)
+                    process.terminate()
+                    process.join(timeout=5)
+                    if process.is_alive():
+                        process.kill()
             entropies = sorted(list(entropies), key=lambda item: item[1], reverse=True)
             return entropies
 
