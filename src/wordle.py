@@ -25,10 +25,16 @@ You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2
 import argparse
 import cProfile
 import logging
+import os
+import stat
 
 import constants
 from solver import solve
 
+# Pre-create log file with owner-only permissions to prevent info disclosure
+_log_fd = os.open(constants.LOG_FILE, os.O_WRONLY | os.O_CREAT | os.O_APPEND,
+                  stat.S_IRUSR | stat.S_IWUSR)
+os.close(_log_fd)
 logging.basicConfig(filename=constants.LOG_FILE, filemode='a', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 

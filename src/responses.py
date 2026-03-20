@@ -95,7 +95,7 @@ def get_new_guess_interactive(length):
     return new_guess
 
 
-@lru_cache(maxsize=None)
+@lru_cache(maxsize=65536)
 def get_response_non_interactive(word, guess):
     """
     Returns the response for a given word and guess.
